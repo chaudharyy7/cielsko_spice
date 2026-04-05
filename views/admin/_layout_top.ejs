@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title %></title>
+  <link rel="icon" href="/images/favicon.svg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="/css/admin.css"/>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo"><span>🌶️</span><div><strong>Cielsko</strong><small>Admin Panel</small></div></div>
+    <nav class="sidebar__nav">
+      <a href="/admin"              class="sidebar__link <%= active==='dashboard'?'active':''    %>"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      <div class="sidebar__group-label">Content</div>
+      <a href="/admin/products"     class="sidebar__link <%= active==='products'?'active':''     %>"><i class="fa-solid fa-pepper-hot"></i> Products</a>
+      <a href="/admin/certificates" class="sidebar__link <%= active==='certificates'?'active':'' %>"><i class="fa-solid fa-award"></i> Certificates</a>
+      <a href="/admin/blogs"        class="sidebar__link <%= active==='blogs'?'active':''        %>"><i class="fa-solid fa-newspaper"></i> Blog Posts</a>
+      <a href="/admin/team"         class="sidebar__link <%= active==='team'?'active':''         %>"><i class="fa-solid fa-users"></i> Our Team</a>
+      <div class="sidebar__group-label">Sales</div>
+      <a href="/admin/orders"       class="sidebar__link <%= active==='orders'?'active':''       %>"><i class="fa-solid fa-cart-shopping"></i> Orders</a>
+      <a href="/admin/contacts"     class="sidebar__link <%= active==='contacts'?'active':''     %>"><i class="fa-solid fa-envelope"></i> Enquiries</a>
+      <div class="sidebar__group-label">Settings</div>
+      <a href="/admin/settings"     class="sidebar__link <%= active==='settings'?'active':''     %>"><i class="fa-solid fa-gear"></i> Site Settings</a>
+      <a href="/admin/users"        class="sidebar__link <%= active==='users'?'active':''        %>"><i class="fa-solid fa-shield-halved"></i> Admin Users</a>
+    </nav>
+    <div class="sidebar__footer">
+      <a href="/" target="_blank" class="sidebar__view-site"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Website</a>
+      <form method="POST" action="/admin/logout"><button type="submit" class="sidebar__logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></form>
+    </div>
+  </aside>
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+      <div class="admin-topbar__right"><span class="admin-topbar__user"><i class="fa-solid fa-user-shield"></i> <%= user.username %></span></div>
+    </header>
+    <% if (typeof flash !== 'undefined' && (flash.success || flash.error)) { %>
+    <div class="admin-flash admin-flash--<%= flash.success?'success':'error' %>">
+      <i class="fa-solid fa-<%= flash.success?'circle-check':'circle-exclamation' %>"></i>
+      <%= flash.success || flash.error %>
+      <button onclick="this.parentElement.remove()" class="flash-close">&times;</button>
+    </div>
+    <% } %>
+    <div class="admin-content">

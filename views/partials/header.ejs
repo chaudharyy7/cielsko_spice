@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <meta name="description" content="<%= typeof metaDescription !== 'undefined' ? metaDescription : 'Cielsko — Premium Indian Spice Exporter' %>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Cinzel:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="container topbar__inner">
+    <div class="topbar__left">
+      <a href="tel:<%= settings?.contact_phone1 || '+917053086259' %>">
+        <i class="fa-solid fa-phone"></i> <%= settings?.contact_phone1 || '+91-7053086259' %>
+      </a>
+      <a href="mailto:<%= settings?.contact_email || 'info@cielsko.com' %>">
+        <i class="fa-solid fa-envelope"></i> <%= settings?.contact_email || 'info@cielsko.com' %>
+      </a>
+      <span><i class="fa-solid fa-location-dot"></i> New Delhi, India</span>
+    </div>
+    <div class="topbar__right">
+      <a href="<%= settings?.contact_instagram || 'https://instagram.com' %>" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+      <a href="<%= settings?.contact_linkedin || 'https://linkedin.com' %>" target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+    </div>
+  </div>
+</div>
+
+<header class="header" id="header">
+  <div class="container header__inner">
+    <a href="/" class="logo">
+      <% if (settings?.site_logo) { %>
+        <img src="<%= settings.site_logo %>" alt="Cielsko Logo" class="logo__img" />
+      <% } else { %>
+        <span class="logo__icon">🌶️</span>
+        <div class="logo__text">
+          <span class="logo__name">Cielsko</span>
+          <span class="logo__tagline">Spice Exporters</span>
+        </div>
+      <% } %>
+    </a>
+
+    <nav class="nav" id="nav">
+      <ul class="nav__list">
+        <li class="nav__item"><a href="/" class="nav__link <%= currentPage==='home'?'active':'' %>">Home</a></li>
+        <li class="nav__item"><a href="/about" class="nav__link <%= currentPage==='about'?'active':'' %>">About Us</a></li>
+        <li class="nav__item nav__item--dropdown">
+          <a href="/products" class="nav__link <%= currentPage==='products'?'active':'' %>">Products <i class="fa-solid fa-chevron-down fa-xs"></i></a>
+          <ul class="nav__dropdown">
+            <li><a href="/products">All Products</a></li>
+            <li><a href="/products?category=whole">Whole Spices</a></li>
+            <li><a href="/products?category=ground">Ground Spices</a></li>
+            <li><a href="/products?category=blended">Blended Spices</a></li>
+            <li><a href="/products?category=leaves">Leaves & Herbs</a></li>
+          </ul>
+        </li>
+        <li class="nav__item"><a href="/certificates" class="nav__link <%= currentPage==='certificates'?'active':'' %>">Certificates</a></li>
+        <li class="nav__item"><a href="/blog" class="nav__link <%= currentPage==='blog'?'active':'' %>">Blog</a></li>
+        <li class="nav__item"><a href="/contact" class="nav__link <%= currentPage==='contact'?'active':'' %>">Contact Us</a></li>
+      </ul>
+    </nav>
+
+    <a href="/contact" class="btn btn--primary header__cta">Get a Free Quote</a>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main class="main-content">

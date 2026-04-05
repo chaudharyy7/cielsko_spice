@@ -1,0 +1,338 @@
+<%- include('../partials/header') %>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__bg-pattern"></div>
+  <div class="container hero__inner">
+
+    <div class="hero__content">
+      <span class="hero__badge">🌿 Trusted Indian Spice Exporter</span>
+      <h1 class="hero__title">
+        The Essence of<br/>
+        <em>India's Finest</em><br/>
+        Spices, Delivered
+      </h1>
+      <p class="hero__subtitle">Premium quality whole & ground spices sourced directly from India's heartland — certified, fresh, and export-ready for global markets.</p>
+      <div class="hero__actions">
+        <a href="/products" class="btn btn--primary btn--lg">Explore Products</a>
+        <a href="/contact" class="btn btn--outline btn--lg">Get a Free Quote</a>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat">
+          <span class="hero__stat-num"><%= settings?.about_years || '2+' %></span>
+          <span class="hero__stat-label">Years Experience</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num"><%= settings?.about_countries || '10+' %></span>
+          <span class="hero__stat-label">Export Countries</span>
+        </div>
+        <div class="hero__stat">
+          <span class="hero__stat-num"><%= settings?.about_clients || '100%' %></span>
+          <span class="hero__stat-label">Satisfied Clients</span>
+        </div>
+      </div>
+    </div><!-- /hero__content -->
+
+    <div class="hero__visual">
+      <div class="hero__spice-ring">
+        <div class="hero__spice-card hero__spice-card--1">
+          <span class="spice-emoji">🌶️</span>
+          <span>Red Chilli</span>
+        </div>
+        <div class="hero__spice-card hero__spice-card--2">
+          <span class="spice-emoji">🟡</span>
+          <span>Turmeric</span>
+        </div>
+        <div class="hero__spice-card hero__spice-card--3">
+          <span class="spice-emoji">🌿</span>
+          <span>Cardamom</span>
+        </div>
+        <div class="hero__spice-card hero__spice-card--4">
+          <span class="spice-emoji">⚫</span>
+          <span>Black Pepper</span>
+        </div>
+        <div class="hero__spice-card hero__spice-card--5">
+          <span class="spice-emoji">🍂</span>
+          <span>Cinnamon</span>
+        </div>
+        <div class="hero__center-orb">
+          <span>🌶️</span>
+        </div>
+      </div>
+    </div><!-- /hero__visual -->
+
+  </div><!-- /hero__inner -->
+  <div class="hero__scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="hero__scroll-line"></div>
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<section class="about-strip section">
+  <div class="container about-strip__inner">
+    <div class="about-strip__text">
+      <span class="section-label">Who We Are</span>
+      <h2 class="section-title">Passion for Quality.<br/><em>Commitment to Trust.</em></h2>
+      <p>At Cielsko, we believe that spices are more than just ingredients — they are the essence of culture, taste, and health. Founded with a vision to bring the finest Indian spices to international markets, we combine traditional sourcing wisdom with modern quality practices.</p>
+      <ul class="about-strip__pillars">
+        <li><span class="pillar-icon">🔬</span><div><strong>Quality Assurance</strong><p>Every batch is carefully tested for purity, color, and aroma.</p></div></li>
+        <li><span class="pillar-icon">🤝</span><div><strong>Transparent Sourcing</strong><p>We partner directly with farmers and trusted suppliers across India.</p></div></li>
+        <li><span class="pillar-icon">🌍</span><div><strong>Global Compliance</strong><p>Processed and packed under FSSAI and export certifications.</p></div></li>
+      </ul>
+      <a href="/about" class="btn btn--primary">Learn More About Us</a>
+    </div>
+    <div class="about-strip__visual">
+      <div class="about-card">
+        <div class="about-card__badge">FSSAI<br/>Certified</div>
+        <div class="about-card__spice-grid">
+          <div class="spice-tile" style="--c:#E8601C">🌶️</div>
+          <div class="spice-tile" style="--c:#D4A017">🟡</div>
+          <div class="spice-tile" style="--c:#2D5016">🌿</div>
+          <div class="spice-tile" style="--c:#2C1810">⚫</div>
+          <div class="spice-tile" style="--c:#8B4513">🍂</div>
+          <div class="spice-tile" style="--c:#556B2F">🌱</div>
+        </div>
+        <p class="about-card__label">India's Finest — Farm to World</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-preview section section--dark">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label section-label--light">What We Offer</span>
+      <h2 class="section-title section-title--light">Our Premium <em>Spice Collection</em></h2>
+      <p class="section-subtitle section-subtitle--light">Whole, ground, and blended spices — curated for global markets, certified for purity.</p>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <% if (featuredProducts && featuredProducts.length > 0) { %>
+        <% featuredProducts.forEach(product => { %>
+        <div class="product-card">
+          <div class="product-card__img">
+            <img src="<%= product.image %>" alt="<%= product.name %>" loading="lazy" onerror="this.src='/images/placeholder-spice.svg'" />
+            <div class="product-card__overlay">
+              <a href="/products/<%= product.slug %>" class="btn btn--light btn--sm">View Details</a>
+            </div>
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__cat"><%= product.category %></span>
+            <h3 class="product-card__name"><%= product.name %></h3>
+            <p class="product-card__desc"><%= product.shortDescription.substring(0, 100) %>...</p>
+          </div>
+        </div>
+        <% }) %>
+      <% } else { %>
+        <% const defaultProducts = [
+          {name:'Red Chilli',      slug:'red-chilli',      emoji:'🌶️', desc:'Sourced for optimal heat and color, ideal for adding a fiery kick to your recipes.', cat:'whole'},
+          {name:'Whole Turmeric',  slug:'whole-turmeric',  emoji:'🟡', desc:'Golden spice with a warm, earthy flavor and high curcumin content.', cat:'whole'},
+          {name:'Green Cardamom',  slug:'green-cardamom',  emoji:'🌿', desc:'Aromatic and sweet pods that elevate teas, desserts, and savory dishes.', cat:'whole'},
+          {name:'Black Pepper',    slug:'black-pepper',    emoji:'⚫', desc:'The King of Spices — bold, pungent, and freshly packed for export.', cat:'whole'},
+          {name:'Cinnamon',        slug:'cinnamon',        emoji:'🍂', desc:'Sweet and aromatic, enhances both sweet and savory culinary creations.', cat:'whole'},
+          {name:'Clove',           slug:'clove',           emoji:'🔵', desc:'Intense aroma and rich flavor that adds a burst of taste to every dish.', cat:'whole'},
+        ]; %>
+        <% defaultProducts.forEach(p => { %>
+        <div class="product-card">
+          <div class="product-card__img product-card__img--emoji">
+            <span class="product-emoji"><%= p.emoji %></span>
+            <div class="product-card__overlay">
+              <a href="/products/<%= p.slug %>" class="btn btn--light btn--sm">View Details</a>
+            </div>
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__cat"><%= p.cat %></span>
+            <h3 class="product-card__name"><%= p.name %></h3>
+            <p class="product-card__desc"><%= p.desc %></p>
+          </div>
+        </div>
+        <% }) %>
+      <% } %>
+    </div>
+    <div class="section-cta">
+      <a href="/products" class="btn btn--gold btn--lg">View All Products</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="why-us section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Why Cielsko</span>
+      <h2 class="section-title">Your Trusted Partner in<br/><em>Spice Exports</em></h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-certificate"></i></div>
+        <h3>Certified Quality</h3>
+        <p>Compliant with FSSAI and international export standards. Every product is lab-tested and export-ready.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-tags"></i></div>
+        <h3>Competitive Pricing</h3>
+        <p>Strong direct sourcing network from farmers ensures maximum cost efficiency without compromising quality.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <h3>Consistent Supply</h3>
+        <p>Reliable fulfillment for large and recurring orders — never run short on your spice inventory.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-box-open"></i></div>
+        <h3>Private Label Options</h3>
+        <p>Custom packaging designed for your brand identity. Serve your customers with your name on premium spices.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-earth-asia"></i></div>
+        <h3>Global Reach</h3>
+        <p>Serving importers and food businesses across Asia, Europe, the Middle East, and beyond.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-card__icon"><i class="fa-solid fa-leaf"></i></div>
+        <h3>Farm to Export</h3>
+        <p>Direct partnerships with farmers across India's spice-rich regions for transparent, traceable sourcing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS STRIP -->
+<section class="cert-strip section section--cream">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Trust & Compliance</span>
+      <h2 class="section-title">Certified for <em>Global Standards</em></h2>
+    </div>
+    <div class="cert-logos">
+      <div class="cert-logo-item"><div class="cert-logo-badge">GST</div><span>GST Certificate</span></div>
+      <div class="cert-logo-item"><div class="cert-logo-badge">MSME</div><span>MSME Certified</span></div>
+      <div class="cert-logo-item"><div class="cert-logo-badge">IEC</div><span>IEC Certificate</span></div>
+      <div class="cert-logo-item"><div class="cert-logo-badge">FSSAI</div><span>FSSAI Licensed</span></div>
+      <div class="cert-logo-item"><div class="cert-logo-badge">RCMC</div><span>RCMC Certified</span></div>
+    </div>
+    <div class="section-cta">
+      <a href="/certificates" class="btn btn--outline">View All Certificates</a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Client Voices</span>
+      <h2 class="section-title">What Our <em>Global Partners</em> Say</h2>
+    </div>
+    <div class="testimonials-slider" id="testimonialsSlider">
+      <div class="testimonials-track" id="testimonialsTrack">
+        <% if (testimonials && testimonials.length > 0) { %>
+          <% testimonials.forEach(t => { %>
+          <div class="testimonial-card">
+            <div class="testimonial-card__stars">
+              <% for(let i=0; i<t.rating; i++) { %><i class="fa-solid fa-star"></i><% } %>
+            </div>
+            <p class="testimonial-card__text">"<%= t.content %>"</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar"><%= t.name.charAt(0) %></div>
+              <div>
+                <strong><%= t.name %></strong>
+                <span><%= t.designation %>, <%= t.company %> (<%= t.country %>)</span>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        <% } else { %>
+          <div class="testimonial-card">
+            <div class="testimonial-card__stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-card__text">"Working with Cielsko has been fantastic. Their turmeric and chili powder are consistently top quality; the aroma and purity are unmatched."</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">S</div>
+              <div><strong>Sharukh Ahmed</strong><span>Spice Importer, Emirates Trading LLC (UAE)</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-card__stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-card__text">"Cielsko provides fully compliant labeling and meets all safety standards, making customs clearance effortless."</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">F</div>
+              <div><strong>Fatima Belkacem</strong><span>Procurement Manager, Oran Spices Co. (Algeria)</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-card__stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-card__text">"Transparent documentation and reliable deliveries give us full confidence in their products."</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">H</div>
+              <div><strong>Hans Müller</strong><span>Product Manager, Bavarian Spice Traders GmbH (Germany)</span></div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-card__stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+            <p class="testimonial-card__text">"Cielsko always delivers exactly when needed with flexible packaging and FSSAI-certified products."</p>
+            <div class="testimonial-card__author">
+              <div class="testimonial-card__avatar">R</div>
+              <div><strong>Rahim Uddin</strong><span>Managing Director, Dhaka Herbs Ltd. (Bangladesh)</span></div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+      <div class="testimonials-controls">
+        <button class="testimonials-btn" id="prevTestimonial" aria-label="Previous"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="testimonials-dots" id="testimonialsDots"></div>
+        <button class="testimonials-btn" id="nextTestimonial" aria-label="Next"><i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG PREVIEW -->
+<% if (recentBlogs && recentBlogs.length > 0) { %>
+<section class="blog-preview section section--cream">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Latest Insights</span>
+      <h2 class="section-title">From Our <em>Spice Journal</em></h2>
+    </div>
+    <div class="blog-grid">
+      <% recentBlogs.forEach((post, i) => { %>
+      <article class="blog-card <%= i === 0 ? 'blog-card--featured' : '' %>">
+        <div class="blog-card__img">
+          <img src="<%= post.image %>" alt="<%= post.title %>" loading="lazy" onerror="this.src='/images/placeholder-blog.svg'" />
+          <span class="blog-card__cat"><%= post.category %></span>
+        </div>
+        <div class="blog-card__body">
+          <span class="blog-card__date"><%= new Date(post.publishedAt).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) %></span>
+          <h3 class="blog-card__title"><a href="/blog/<%= post.slug %>"><%= post.title %></a></h3>
+          <p class="blog-card__excerpt"><%= post.excerpt.substring(0, 120) %>...</p>
+          <a href="/blog/<%= post.slug %>" class="blog-card__link">Read More <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+    <div class="section-cta">
+      <a href="/blog" class="btn btn--outline">View All Posts</a>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <div class="cta-banner__pattern"></div>
+  <div class="container cta-banner__inner">
+    <div class="cta-banner__text">
+      <h2>Ready to Source Premium<br/><em>Indian Spices?</em></h2>
+      <p>Whether you're a wholesaler, distributor, or food brand — Cielsko is your trusted export partner.</p>
+    </div>
+    <div class="cta-banner__actions">
+      <a href="/contact" class="btn btn--gold btn--lg">Get a Free Quote</a>
+      <a href="tel:<%= settings?.contact_phone1 || '+917053086259' %>" class="btn btn--outline-light btn--lg">
+        <i class="fa-solid fa-phone"></i> Call Us Now
+      </a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

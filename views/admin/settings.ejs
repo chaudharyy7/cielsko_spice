@@ -1,0 +1,99 @@
+<%- include('_layout_top') %>
+
+<div class="page-header">
+  <div><h1 class="page-title">Site Settings</h1><p class="page-subtitle">Edit About stats, Contact details, and Logo</p></div>
+</div>
+
+<form method="POST" action="/admin/settings" enctype="multipart/form-data">
+
+  <!-- LOGO -->
+  <div class="admin-card" style="margin-bottom:24px">
+    <div class="admin-card__header"><h2 class="section-heading" style="margin:0"><i class="fa-solid fa-image"></i> Company Logo</h2></div>
+    <div class="settings-grid">
+      <% if (settings?.site_logo) { %>
+      <div class="form-group">
+        <label>Current Logo</label>
+        <div class="logo-preview"><img src="<%= settings.site_logo %>" alt="Logo" style="max-height:80px;max-width:240px;object-fit:contain;" onerror="this.style.display='none'" /></div>
+      </div>
+      <% } %>
+      <div class="form-group">
+        <label>Upload Logo Image</label>
+        <input type="file" name="logoFile" accept="image/*" class="file-input" />
+        <span class="form-hint">PNG with transparent background recommended. Max 2MB.</span>
+      </div>
+      <div class="form-group">
+        <label>— OR — Logo URL / Google Drive URL</label>
+        <input type="text" name="site_logo" value="<%= settings?.site_logo||'' %>" placeholder="https://drive.google.com/file/d/... or /images/logos/logo.png" />
+        <span class="form-hint">Leave empty to use text logo (🌶️ Cielsko)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT STATS -->
+  <div class="admin-card" style="margin-bottom:24px">
+    <div class="admin-card__header"><h2 class="section-heading" style="margin:0"><i class="fa-solid fa-chart-bar"></i> About Us — Statistics</h2></div>
+    <div class="settings-grid">
+      <div class="form-group">
+        <label>Years of Experience</label>
+        <input type="text" name="about_years" value="<%= settings?.about_years||'2+' %>" placeholder="e.g. 2+" />
+      </div>
+      <div class="form-group">
+        <label>Export Countries</label>
+        <input type="text" name="about_countries" value="<%= settings?.about_countries||'10+' %>" placeholder="e.g. 10+" />
+      </div>
+      <div class="form-group">
+        <label>Satisfied Clients</label>
+        <input type="text" name="about_clients" value="<%= settings?.about_clients||'100%' %>" placeholder="e.g. 100%" />
+      </div>
+      <div class="form-group">
+        <label>Spice Varieties</label>
+        <input type="text" name="about_varieties" value="<%= settings?.about_varieties||'13+' %>" placeholder="e.g. 13+" />
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>About Us Tagline</label>
+        <input type="text" name="about_tagline" value="<%= settings?.about_tagline||'Passion for Quality. Commitment to Trust.' %>" />
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT DETAILS -->
+  <div class="admin-card" style="margin-bottom:24px">
+    <div class="admin-card__header"><h2 class="section-heading" style="margin:0"><i class="fa-solid fa-address-card"></i> Contact Us — Details</h2></div>
+    <div class="settings-grid">
+      <div class="form-group">
+        <label>Primary Phone</label>
+        <input type="text" name="contact_phone1" value="<%= settings?.contact_phone1||'+91-7053086259' %>" placeholder="+91-7053086259" />
+      </div>
+      <div class="form-group">
+        <label>Secondary Phone</label>
+        <input type="text" name="contact_phone2" value="<%= settings?.contact_phone2||'+91-99108 48474' %>" placeholder="+91-99108 48474" />
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" name="contact_email" value="<%= settings?.contact_email||'info@cielsko.com' %>" placeholder="info@cielsko.com" />
+      </div>
+      <div class="form-group">
+        <label>Business Hours</label>
+        <input type="text" name="contact_hours" value="<%= settings?.contact_hours||'Monday – Saturday: 9:00 AM – 6:00 PM IST' %>" />
+      </div>
+      <div class="form-group" style="grid-column:1/-1">
+        <label>Full Address</label>
+        <input type="text" name="contact_address" value="<%= settings?.contact_address||'P50, P Block, P Extension, Mohan Garden, New Delhi – 110059, India' %>" />
+      </div>
+      <div class="form-group">
+        <label>Instagram URL</label>
+        <input type="url" name="contact_instagram" value="<%= settings?.contact_instagram||'' %>" placeholder="https://instagram.com/cielsko" />
+      </div>
+      <div class="form-group">
+        <label>LinkedIn URL</label>
+        <input type="url" name="contact_linkedin" value="<%= settings?.contact_linkedin||'' %>" placeholder="https://linkedin.com/company/cielsko" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn-primary btn-lg"><i class="fa-solid fa-floppy-disk"></i> Save All Settings</button>
+  </div>
+</form>
+
+<%- include('_layout_bottom') %>

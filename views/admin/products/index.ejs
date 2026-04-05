@@ -1,0 +1,70 @@
+<%- include('../_layout_top') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Products</h1>
+    <p class="page-subtitle"><%= products.length %> total products</p>
+  </div>
+  <a href="/admin/products/new" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Product</a>
+</div>
+
+<div class="admin-card">
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Image</th><th>Name</th><th>Code</th><th>Category</th><th>Featured</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (products.length > 0) { %>
+          <% products.forEach(p => { %>
+          <tr>
+            <td>
+              <img src="<%= p.image %>" alt="<%= p.name %>" class="table-thumb"
+                onerror="this.src='/images/placeholder-spice.svg'" />
+            </td>
+            <td>
+              <strong><%= p.name %></strong><br/>
+              <small class="text-muted"><%= p.slug %></small>
+            </td>
+            <td><%= p.productCode || '—' %></td>
+            <td><span class="badge badge--blue"><%= p.category %></span></td>
+            <td>
+              <form method="POST" action="/admin/products/<%= p._id %>/toggle-featured" style="display:inline">
+                <button type="submit" class="btn-icon <%= p.featured ? 'text-gold' : 'text-muted' %>"
+                  title="<%= p.featured ? 'Remove from featured' : 'Set as featured' %>">
+                  <i class="fa-<%= p.featured ? 'solid' : 'regular' %> fa-star"></i>
+                </button>
+              </form>
+            </td>
+            <td>
+              <span class="badge badge--<%= p.isActive ? 'green' : 'red' %>">
+                <%= p.isActive ? 'Active' : 'Hidden' %>
+              </span>
+            </td>
+            <td class="td-actions">
+              <a href="/products/<%= p.slug %>" target="_blank" class="btn-icon" title="View on site">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+              <a href="/admin/products/<%= p._id %>/edit" class="btn-icon text-blue" title="Edit">
+                <i class="fa-solid fa-pen"></i>
+              </a>
+              <form method="POST" action="/admin/products/<%= p._id %>/delete"
+                onsubmit="return confirm('Delete <%= p.name %>? This cannot be undone.')" style="display:inline">
+                <button type="submit" class="btn-icon text-red" title="Delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="7" class="td-empty">No products yet. <a href="/admin/products/new">Add your first product →</a></td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../_layout_bottom') %>

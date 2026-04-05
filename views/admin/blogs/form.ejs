@@ -1,0 +1,62 @@
+<%- include('../_layout_top') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title"><%= isEdit ? 'Edit Blog Post' : 'Write New Post' %></h1>
+  </div>
+  <a href="/admin/blogs" class="btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to Blogs</a>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="admin-flash admin-flash--error"><i class="fa-solid fa-circle-exclamation"></i> <%= error %></div>
+<% } %>
+
+<form method="POST" action="/admin/blogs/<%= isEdit ? blog._id + '/edit' : 'new' %>" enctype="multipart/form-data" class="product-form">
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-pen-to-square"></i> Post Content</h3>
+        <div class="form-group"><label>Title *</label><input type="text" name="title" id="blogTitle" value="<%= blog?.title||'' %>" required placeholder="Blog post title" /></div>
+        <div class="form-group"><label>URL Slug</label><input type="text" name="slug" id="blogSlug" value="<%= blog?.slug||'' %>" placeholder="auto-generated" /></div>
+        <div class="form-group"><label>Excerpt *</label><textarea name="excerpt" rows="3" required placeholder="Short summary shown on blog listing page"><%= blog?.excerpt||'' %></textarea></div>
+        <div class="form-group">
+          <label>Content * <span class="form-hint">(HTML supported)</span></label>
+          <textarea name="content" id="blogContent" rows="18" required placeholder="Full blog post content (HTML allowed)"><%= blog?.content||'' %></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="form-col">
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-image"></i> Featured Image</h3>
+        <% if (isEdit && blog?.image) { %><div class="current-image"><img src="<%= blog.image %>" alt="" onerror="this.src='/images/placeholder-blog.svg'" /></div><% } %>
+        <div class="form-group"><label>Upload Image</label><input type="file" name="imageFile" accept="image/*" class="file-input" /></div>
+        <div class="form-group"><label>— OR — Image URL / Google Drive URL</label><input type="text" name="imageUrl" value="<%= blog?.image||'' %>" placeholder="https://drive.google.com/file/d/..." /></div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-info-circle"></i> Meta</h3>
+        <div class="form-group"><label>Author</label><input type="text" name="author" value="<%= blog?.author||'Cielsko Team' %>" /></div>
+        <div class="form-group"><label>Category</label><input type="text" name="category" value="<%= blog?.category||'Blog' %>" /></div>
+        <div class="form-group"><label>Tags <span class="form-hint">(comma-separated)</span></label><input type="text" name="tags" value="<%= blog?.tags?.join(', ')||'' %>" placeholder="turmeric, spices, export" /></div>
+        <div class="form-group"><label>Publish Date</label><input type="datetime-local" name="publishedAt" value="<%= blog?.publishedAt ? new Date(blog.publishedAt).toISOString().slice(0,16) : '' %>" /></div>
+        <div class="form-group">
+          <label class="checkbox-label"><input type="checkbox" name="isPublished" <%= !isEdit || blog?.isPublished ? 'checked' : '' %> /><span>Published (visible on site)</span></label>
+        </div>
+      </div>
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-magnifying-glass"></i> SEO</h3>
+        <div class="form-group"><label>Meta Title</label><input type="text" name="metaTitle" value="<%= blog?.metaTitle||'' %>" /></div>
+        <div class="form-group"><label>Meta Description</label><textarea name="metaDescription" rows="2"><%= blog?.metaDescription||'' %></textarea></div>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions">
+    <a href="/admin/blogs" class="btn-outline">Cancel</a>
+    <button type="submit" class="btn-primary"><i class="fa-solid fa-<%= isEdit ? 'floppy-disk' : 'plus' %>"></i> <%= isEdit ? 'Save Changes' : 'Publish Post' %></button>
+  </div>
+</form>
+
+<script>
+const t = document.getElementById('blogTitle'), s = document.getElementById('blogSlug');
+if (!s.value) t.addEventListener('input', () => { s.value = t.value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-'); });
+</script>
+<%- include('../_layout_bottom') %>

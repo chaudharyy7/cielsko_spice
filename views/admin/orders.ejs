@@ -1,0 +1,50 @@
+<%- include('_layout_top') %>
+
+<div class="page-header">
+  <div><h1 class="page-title">Product Orders</h1><p class="page-subtitle"><%= orders.length %> total order enquiries</p></div>
+</div>
+
+<div class="admin-card">
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Product</th><th>Customer</th><th>Email</th><th>Country</th><th>Quantity</th><th>Packaging</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% if (orders.length > 0) { %>
+          <% orders.forEach(o => { %>
+          <tr class="<%= o.status==='new'?'row-new':'' %>">
+            <td><strong><%= o.productName %></strong></td>
+            <td><div><strong><%= o.name %></strong></div><small><%= o.company||'' %></small></td>
+            <td><a href="mailto:<%= o.email %>"><%= o.email %></a><br/><small><%= o.phone||'' %></small></td>
+            <td><%= o.country||'—' %></td>
+            <td><%= o.quantity||'—' %></td>
+            <td><%= o.packaging||'—' %></td>
+            <td><%= new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></td>
+            <td>
+              <form method="POST" action="/admin/orders/<%= o._id %>/status" style="display:inline">
+                <select name="status" onchange="this.form.submit()" class="status-select">
+                  <option value="new" <%= o.status==='new'?'selected':'' %>>New</option>
+                  <option value="processing" <%= o.status==='processing'?'selected':'' %>>Processing</option>
+                  <option value="replied" <%= o.status==='replied'?'selected':'' %>>Replied</option>
+                  <option value="closed" <%= o.status==='closed'?'selected':'' %>>Closed</option>
+                </select>
+              </form>
+            </td>
+            <td class="td-actions">
+              <% if (o.message) { %>
+              <button class="btn-icon text-blue" title="<%= o.message %>" onclick="alert('<%= o.message.replace(/'/g, `\\'`) %>')"><i class="fa-solid fa-message"></i></button>
+              <% } %>
+              <a href="mailto:<%= o.email %>?subject=Re: Your order enquiry for <%= encodeURIComponent(o.productName) %>" class="btn-icon text-blue" title="Reply"><i class="fa-solid fa-reply"></i></a>
+              <form method="POST" action="/admin/orders/<%= o._id %>/delete" onsubmit="return confirm('Delete this order?')" style="display:inline">
+                <button type="submit" class="btn-icon text-red"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="9" class="td-empty">No order enquiries yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%- include('_layout_bottom') %>

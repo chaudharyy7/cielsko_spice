@@ -1,0 +1,121 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a> <span>/</span> <span>Blog</span></nav>
+    <h1 class="page-hero__title">Spice <em>Journal</em></h1>
+    <p class="page-hero__subtitle">Insights, stories, and knowledge from India's spice world</p>
+  </div>
+  <div class="page-hero__pattern"></div>
+</section>
+
+<section class="section blog-page">
+  <div class="container blog-page__layout">
+
+    <!-- Blog Posts -->
+    <div class="blog-main">
+      <!-- Search -->
+      <div class="blog-search">
+        <form action="/blog" method="GET" class="blog-search__form">
+          <% if (selectedTag) { %><input type="hidden" name="tag" value="<%= selectedTag %>" /><% } %>
+          <input type="text" name="search" placeholder="Search articles..." value="<%= search %>" class="blog-search__input" />
+          <button type="submit" class="blog-search__btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+      </div>
+
+      <% if (selectedTag) { %>
+      <div class="blog-filter-active">
+        Filtered by tag: <strong>#<%= selectedTag %></strong>
+        <a href="/blog" class="blog-filter-clear"><i class="fa-solid fa-xmark"></i> Clear</a>
+      </div>
+      <% } %>
+
+      <% if (blogs && blogs.length > 0) { %>
+      <div class="blog-list">
+        <% blogs.forEach((post, i) => { %>
+        <article class="blog-list-card">
+          <div class="blog-list-card__img">
+            <a href="/blog/<%= post.slug %>">
+              <img src="<%= post.image %>" alt="<%= post.title %>" loading="lazy" onerror="this.src='/images/placeholder-blog.svg'" />
+            </a>
+          </div>
+          <div class="blog-list-card__body">
+            <div class="blog-list-card__meta">
+              <span class="blog-list-card__cat"><%= post.category %></span>
+              <span class="blog-list-card__date"><i class="fa-regular fa-calendar"></i> <%= new Date(post.publishedAt).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) %></span>
+              <span class="blog-list-card__author"><i class="fa-regular fa-user"></i> <%= post.author %></span>
+            </div>
+            <h2 class="blog-list-card__title"><a href="/blog/<%= post.slug %>"><%= post.title %></a></h2>
+            <p class="blog-list-card__excerpt"><%= post.excerpt.substring(0, 200) %>...</p>
+            <div class="blog-list-card__footer">
+              <div class="blog-list-card__tags">
+                <% if (post.tags && post.tags.length) { post.tags.slice(0,3).forEach(tag => { %>
+                <a href="/blog?tag=<%= tag %>" class="tag">#<%= tag %></a>
+                <% }) } %>
+              </div>
+              <a href="/blog/<%= post.slug %>" class="btn btn--outline btn--sm">Read More</a>
+            </div>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+      <% } else { %>
+      <div class="blog-empty">
+        <i class="fa-solid fa-newspaper"></i>
+        <h3>No articles found</h3>
+        <p>Try a different search term or <a href="/blog">view all posts</a>.</p>
+      </div>
+      <% } %>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="blog-sidebar">
+      <!-- Recent Posts -->
+      <div class="sidebar-widget">
+        <h3 class="sidebar-widget__title">Recent Posts</h3>
+        <ul class="sidebar-recent">
+          <% if (recentBlogs && recentBlogs.length > 0) { %>
+            <% recentBlogs.forEach(post => { %>
+            <li class="sidebar-recent__item">
+              <a href="/blog/<%= post.slug %>"><%= post.title %></a>
+              <span><%= new Date(post.publishedAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) %></span>
+            </li>
+            <% }) %>
+          <% } else { %>
+            <li class="sidebar-recent__item"><span>No posts yet.</span></li>
+          <% } %>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="sidebar-widget">
+        <h3 class="sidebar-widget__title">Categories</h3>
+        <ul class="sidebar-cats">
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+
+      <!-- Tags -->
+      <% if (allTags && allTags.length > 0) { %>
+      <div class="sidebar-widget">
+        <h3 class="sidebar-widget__title">Tags</h3>
+        <div class="sidebar-tags">
+          <% allTags.forEach(tag => { %>
+          <a href="/blog?tag=<%= tag %>" class="tag <%= selectedTag === tag ? 'tag--active' : '' %>">#<%= tag %></a>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <!-- CTA Widget -->
+      <div class="sidebar-widget sidebar-cta">
+        <h3>Need Premium Spices?</h3>
+        <p>Get in touch for bulk orders and custom requirements.</p>
+        <a href="/contact" class="btn btn--primary btn--block">Get a Free Quote</a>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

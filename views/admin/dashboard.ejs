@@ -1,0 +1,53 @@
+<%- include('_layout_top') %>
+<div class="page-header">
+  <div><h1 class="page-title">Dashboard</h1><p class="page-subtitle">Welcome back, <strong><%= user.username %></strong> 👋</p></div>
+  <a href="/" target="_blank" class="btn-outline"><i class="fa-solid fa-arrow-up-right-from-square"></i> View Site</a>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--orange"><div class="stat-card__icon"><i class="fa-solid fa-pepper-hot"></i></div><div class="stat-card__body"><span class="stat-card__num"><%= stats.products %></span><span class="stat-card__label">Active Products</span></div><a href="/admin/products" class="stat-card__link">Manage →</a></div>
+  <div class="stat-card stat-card--gold"><div class="stat-card__icon"><i class="fa-solid fa-cart-shopping"></i></div><div class="stat-card__body"><span class="stat-card__num"><%= stats.newOrders %></span><span class="stat-card__label">New Orders</span></div><a href="/admin/orders" class="stat-card__link">View →</a></div>
+  <div class="stat-card stat-card--green"><div class="stat-card__icon"><i class="fa-solid fa-envelope"></i></div><div class="stat-card__body"><span class="stat-card__num"><%= stats.newContacts %></span><span class="stat-card__label">New Enquiries</span></div><a href="/admin/contacts" class="stat-card__link">View →</a></div>
+  <div class="stat-card stat-card--red"><div class="stat-card__icon"><i class="fa-solid fa-newspaper"></i></div><div class="stat-card__body"><span class="stat-card__num"><%= stats.blogs %></span><span class="stat-card__label">Blog Posts</span></div><a href="/admin/blogs" class="stat-card__link">Manage →</a></div>
+</div>
+
+<div class="quick-actions"><h2 class="section-heading">Quick Actions</h2>
+  <div class="quick-actions__grid">
+    <a href="/admin/products/new" class="quick-action-btn"><i class="fa-solid fa-plus"></i> Add Product</a>
+    <a href="/admin/blogs/new"    class="quick-action-btn"><i class="fa-solid fa-pen-to-square"></i> Write Blog</a>
+    <a href="/admin/team"         class="quick-action-btn"><i class="fa-solid fa-users"></i> Manage Team</a>
+    <a href="/admin/settings"     class="quick-action-btn"><i class="fa-solid fa-sliders"></i> Site Settings</a>
+  </div>
+</div>
+
+<div class="dash-grid">
+  <div class="admin-card">
+    <div class="admin-card__header"><h2 class="section-heading" style="margin:0">Recent Orders</h2><a href="/admin/orders" class="btn-sm-link">View All →</a></div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Product</th><th>Customer</th><th>Country</th><th>Qty</th><th>Status</th></tr></thead>
+        <tbody>
+          <% if(recentOrders.length > 0) { recentOrders.forEach(o => { %>
+          <tr><td><strong><%= o.productName %></strong></td><td><%= o.name %></td><td><%= o.country||'—' %></td><td><%= o.quantity||'—' %></td>
+            <td><span class="badge badge--<%= o.status==='new'?'orange':o.status==='replied'?'green':'blue' %>"><%= o.status %></span></td></tr>
+          <% }) } else { %><tr><td colspan="5" class="td-empty">No orders yet.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card__header"><h2 class="section-heading" style="margin:0">Recent Enquiries</h2><a href="/admin/contacts" class="btn-sm-link">View All →</a></div>
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead><tr><th>Name</th><th>Email</th><th>Country</th><th>Status</th></tr></thead>
+        <tbody>
+          <% if(recentContacts.length > 0) { recentContacts.forEach(c => { %>
+          <tr><td><strong><%= c.name %></strong></td><td><a href="mailto:<%= c.email %>"><%= c.email %></a></td><td><%= c.country||'—' %></td>
+            <td><span class="badge badge--<%= c.status==='new'?'orange':c.status==='replied'?'green':'blue' %>"><%= c.status %></span></td></tr>
+          <% }) } else { %><tr><td colspan="4" class="td-empty">No enquiries yet.</td></tr><% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('_layout_bottom') %>

@@ -1,0 +1,208 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a><span>/</span><a href="/products">Products</a><span>/</span><span><%= product.name %></span></nav>
+  </div>
+  <div class="page-hero__pattern"></div>
+</section>
+
+<section class="section product-detail-page">
+  <div class="container">
+    <div class="product-detail">
+
+      <!-- Image -->
+      <div class="product-detail__img">
+        <img src="<%= product.image %>" alt="<%= product.name %>"
+          onerror="this.src='/images/placeholder-spice.svg'" />
+      </div>
+
+      <!-- Info -->
+      <div class="product-detail__info">
+        <span class="product-card__cat"><%= product.category %></span>
+        <h1 class="product-detail__name"><%= product.name %></h1>
+        <% if (product.productCode || product.hsCode) { %>
+        <div class="product-detail__codes">
+          <% if (product.productCode) { %><span><strong>Code:</strong> <%= product.productCode %></span><% } %>
+          <% if (product.hsCode) { %><span><strong>HS Code:</strong> <%= product.hsCode %></span><% } %>
+        </div>
+        <% } %>
+        <div class="product-detail__desc"><%- product.description %></div>
+
+        <!-- Local Names (multilingual) -->
+        <% if (product.localNames && product.localNames.length > 0) { %>
+        <div class="product-detail__local-names">
+          <strong>Known As:</strong>
+          <div class="local-names-list">
+            <% product.localNames.forEach(ln => { %>
+            <span class="local-name-tag"><em><%= ln.language %>:</em> <%= ln.name %></span>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Actions -->
+        <div class="product-detail__actions">
+          <button class="btn btn--primary btn--lg" onclick="document.getElementById('orderModal').classList.add('open')">
+            <i class="fa-solid fa-cart-shopping"></i> Order Now
+          </button>
+          <a href="/contact" class="btn btn--outline btn--lg">
+            <i class="fa-solid fa-envelope"></i> General Enquiry
+          </a>
+        </div>
+
+        <!-- Packaging -->
+        <% if (product.packaging && product.packaging.length > 0) { %>
+        <div class="product-detail__packaging">
+          <strong>Packaging Options:</strong>
+          <div class="product-detail__pack-tags">
+            <% product.packaging.forEach(p => { %><span class="pack-tag"><%= p %></span><% }) %>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Full Specifications Table -->
+    <% const hasSpecs = product.botanicalName || product.family || product.origin || product.harvestTime ||
+       product.loadingCapacity || product.appearance || product.form || product.aromaFlavor ||
+       product.quality || product.moisture || product.acidInsoluble || product.volatileOil ||
+       product.totalAsh || (product.extraSpecs && product.extraSpecs.length > 0); %>
+    <% if (hasSpecs) { %>
+    <div class="specs-section">
+      <h2 class="specs-section__title">Product Specifications</h2>
+      <div class="specs-table-wrap">
+        <table class="specs-table">
+          <thead><tr><th>Parameter</th><th>Specification</th></tr></thead>
+          <tbody>
+            <tr><td>Product Name</td><td><strong><%= product.name %></strong></td></tr>
+            <% if (product.hsCode) { %><tr><td>HS Code</td><td><%= product.hsCode %></td></tr><% } %>
+            <% if (product.productCode) { %><tr><td>Product Code</td><td><%= product.productCode %></td></tr><% } %>
+            <% if (product.origin) { %><tr><td>Origin</td><td><%= product.origin %></td></tr><% } %>
+            <% if (product.botanicalName) { %><tr><td>Botanical Name</td><td><em><%= product.botanicalName %></em></td></tr><% } %>
+            <% if (product.family) { %><tr><td>Family</td><td><%= product.family %></td></tr><% } %>
+            <% if (product.harvestTime) { %><tr><td>Harvest Time</td><td><%= product.harvestTime %></td></tr><% } %>
+            <% if (product.packaging && product.packaging.length) { %><tr><td>Packing</td><td><%= product.packaging.join(', ') %></td></tr><% } %>
+            <% if (product.loadingCapacity) { %><tr><td>Loading Capacity</td><td><%= product.loadingCapacity %></td></tr><% } %>
+            <% if (product.appearance) { %><tr><td>Appearance / Color</td><td><%= product.appearance %></td></tr><% } %>
+            <% if (product.form) { %><tr><td>Form</td><td><%= product.form %></td></tr><% } %>
+            <% if (product.aromaFlavor) { %><tr><td>Aroma / Flavor</td><td><%= product.aromaFlavor %></td></tr><% } %>
+            <% if (product.quality) { %><tr><td>Quality</td><td><%= product.quality %></td></tr><% } %>
+            <% if (product.moisture) { %><tr><td>Moisture</td><td><%= product.moisture %></td></tr><% } %>
+            <% if (product.acidInsoluble) { %><tr><td>Acid Insoluble Ash</td><td><%= product.acidInsoluble %></td></tr><% } %>
+            <% if (product.volatileOil) { %><tr><td>Volatile Oil</td><td><%= product.volatileOil %></td></tr><% } %>
+            <% if (product.totalAsh) { %><tr><td>Total Ash</td><td><%= product.totalAsh %></td></tr><% } %>
+            <% if (product.extraSpecs) { product.extraSpecs.forEach(s => { %>
+            <tr><td><%= s.key %></td><td><%= s.value %></td></tr>
+            <% }) } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Related Products -->
+    <% if (related && related.length > 0) { %>
+    <div class="related-products">
+      <h2 class="section-title">Related <em>Products</em></h2>
+      <div class="products-grid products-grid--page">
+        <% related.forEach(p => { %>
+        <div class="product-card">
+          <div class="product-card__img">
+            <img src="<%= p.image %>" alt="<%= p.name %>" loading="lazy" onerror="this.src='/images/placeholder-spice.svg'" />
+            <div class="product-card__overlay"><a href="/products/<%= p.slug %>" class="btn btn--light btn--sm">View Details</a></div>
+          </div>
+          <div class="product-card__body">
+            <span class="product-card__cat"><%= p.category %></span>
+            <h3 class="product-card__name"><%= p.name %></h3>
+            <p class="product-card__desc"><%= p.shortDescription.substring(0,100) %>...</p>
+          </div>
+        </div>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- ORDER NOW MODAL -->
+<div class="modal order-modal" id="orderModal" role="dialog" aria-modal="true" aria-label="Order enquiry">
+  <div class="modal__backdrop" onclick="document.getElementById('orderModal').classList.remove('open')"></div>
+  <div class="modal__box modal__box--lg">
+    <div class="modal__header">
+      <div>
+        <h2>Order Enquiry</h2>
+        <p class="modal__subtitle">Product: <strong><%= product.name %></strong></p>
+      </div>
+      <button onclick="document.getElementById('orderModal').classList.remove('open')" class="modal__close" aria-label="Close">&times;</button>
+    </div>
+
+    <div id="orderAlert" class="form-alert" style="display:none"></div>
+
+    <form id="orderForm" class="order-form">
+      <input type="hidden" name="productId" value="<%= product._id %>" />
+      <div class="form-row-2">
+        <div class="form-group"><label>Full Name *</label><input type="text" name="name" required placeholder="Your name" /></div>
+        <div class="form-group"><label>Email Address *</label><input type="email" name="email" required placeholder="your@email.com" /></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Phone Number</label><input type="tel" name="phone" placeholder="+1 234 567 890" /></div>
+        <div class="form-group"><label>Company Name</label><input type="text" name="company" placeholder="Your company" /></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Country *</label><input type="text" name="country" required placeholder="Your country" /></div>
+        <div class="form-group"><label>Required Quantity</label><input type="text" name="quantity" placeholder="e.g. 500 kg, 1 MT" /></div>
+      </div>
+      <% if (product.packaging && product.packaging.length > 0) { %>
+      <div class="form-group">
+        <label>Preferred Packaging</label>
+        <select name="packaging">
+          <option value="">Select packaging option</option>
+          <% product.packaging.forEach(pk => { %><option value="<%= pk %>"><%= pk %></option><% }) %>
+          <option value="Custom">Custom / Other</option>
+        </select>
+      </div>
+      <% } %>
+      <div class="form-group"><label>Additional Requirements</label><textarea name="message" rows="3" placeholder="Any specific requirements, quality standards, delivery timeline..."></textarea></div>
+      <div class="form-actions">
+        <button type="button" onclick="document.getElementById('orderModal').classList.remove('open')" class="btn btn--outline">Cancel</button>
+        <button type="submit" class="btn btn--primary btn--lg" id="orderSubmitBtn">
+          <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> Submit Order Enquiry</span>
+          <span class="btn-loader" style="display:none"><i class="fa-solid fa-spinner fa-spin"></i> Sending...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('orderForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const alertEl = document.getElementById('orderAlert');
+  const btn = document.getElementById('orderSubmitBtn');
+  btn.querySelector('.btn-text').style.display = 'none';
+  btn.querySelector('.btn-loader').style.display = 'inline';
+  btn.disabled = true;
+
+  const data = Object.fromEntries(new FormData(this));
+  try {
+    const res = await fetch('/api/orders', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const json = await res.json();
+    alertEl.className = 'form-alert form-alert--' + (json.success ? 'success' : 'error');
+    alertEl.textContent = (json.success ? '✅ ' : '❌ ') + json.message;
+    alertEl.style.display = 'block';
+    if (json.success) { this.reset(); }
+  } catch(err) {
+    alertEl.className = 'form-alert form-alert--error';
+    alertEl.textContent = '❌ Something went wrong. Please try again.';
+    alertEl.style.display = 'block';
+  } finally {
+    btn.querySelector('.btn-text').style.display = 'inline';
+    btn.querySelector('.btn-loader').style.display = 'none';
+    btn.disabled = false;
+  }
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('orderModal').classList.remove('open'); });
+</script>
+
+<%- include('../partials/footer') %>

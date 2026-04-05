@@ -1,0 +1,292 @@
+<%- include('../_layout_top') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title"><%= isEdit ? 'Edit Product' : 'Add New Product' %></h1>
+    <p class="page-subtitle"><%= isEdit ? 'Update product details below' : 'Fill in the product specifications' %></p>
+  </div>
+  <a href="/admin/products" class="btn-outline"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
+</div>
+
+<% if (typeof error !== 'undefined' && error) { %>
+<div class="admin-flash admin-flash--error"><i class="fa-solid fa-circle-exclamation"></i> <%= error %></div>
+<% } %>
+
+<form method="POST" action="/admin/products/<%= isEdit ? product._id + '/edit' : 'new' %>"
+  enctype="multipart/form-data" class="product-form">
+
+  <div class="form-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="form-col">
+
+      <!-- Basic Info -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-info-circle"></i> Basic Information</h3>
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" name="name" value="<%= product?.name || '' %>" required placeholder="e.g. Red Chilli Whole" />
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Product Code</label>
+            <input type="text" name="productCode" value="<%= product?.productCode || '' %>" placeholder="e.g. SP-001" />
+          </div>
+          <div class="form-group">
+            <label>HS Code</label>
+            <input type="text" name="hsCode" value="<%= product?.hsCode || '' %>" placeholder="e.g. 9042190" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>URL Slug</label>
+          <input type="text" name="slug" id="slugField" value="<%= product?.slug || '' %>" placeholder="auto-generated from name" />
+          <span class="form-hint">Leave blank to auto-generate from name</span>
+        </div>
+        <div class="form-group">
+          <label>Short Description *</label>
+          <textarea name="shortDescription" rows="2" required placeholder="One-line product summary for cards"><%= product?.shortDescription || '' %></textarea>
+        </div>
+        <div class="form-group">
+          <label>Full Description *</label>
+          <textarea name="description" rows="5" required placeholder="Detailed product description"><%= product?.description || '' %></textarea>
+        </div>
+      </div>
+
+      <!-- Classification -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-tags"></i> Classification</h3>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Category *</label>
+            <select name="category">
+              <% ['whole','ground','blended','leaves','other'].forEach(c => { %>
+              <option value="<%= c %>" <%= product?.category === c ? 'selected' : '' %>><%= c.charAt(0).toUpperCase()+c.slice(1) %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Origin</label>
+            <input type="text" name="origin" value="<%= product?.origin || 'India' %>" />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Botanical Name</label>
+            <input type="text" name="botanicalName" value="<%= product?.botanicalName || '' %>" placeholder="e.g. Capsicum annuum" />
+          </div>
+          <div class="form-group">
+            <label>Family</label>
+            <input type="text" name="family" value="<%= product?.family || '' %>" placeholder="e.g. Solanaceae" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Harvest & Packing -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-box"></i> Harvest & Packaging</h3>
+        <div class="form-group">
+          <label>Harvest Time</label>
+          <input type="text" name="harvestTime" value="<%= product?.harvestTime || '' %>" placeholder="e.g. January to May" />
+        </div>
+        <div class="form-group">
+          <label>Packaging Options <span class="form-hint">(comma-separated)</span></label>
+          <input type="text" name="packaging" value="<%= product?.packaging?.join(', ') || '' %>" placeholder="1 kg, 5 kg, 10 kg, 25 kg, 40 kg" />
+        </div>
+        <div class="form-group">
+          <label>Loading Capacity</label>
+          <input type="text" name="loadingCapacity" value="<%= product?.loadingCapacity || '' %>" placeholder="e.g. 20 Ft: 6–7 MTS, 40 Ft: 13–14 MTS" />
+        </div>
+      </div>
+
+    </div><!-- /LEFT -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="form-col">
+
+      <!-- Image -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-image"></i> Product Image</h3>
+        <% if (isEdit && product?.image) { %>
+        <div class="current-image">
+          <img src="<%= product.image %>" alt="Current" onerror="this.src='/images/placeholder-spice.svg'" />
+          <span>Current image</span>
+        </div>
+        <% } %>
+        <div class="form-group">
+          <label>Upload New Image</label>
+          <input type="file" name="imageFile" accept="image/*" class="file-input" />
+          <span class="form-hint">JPG, PNG, WebP — max 5MB</span>
+        </div>
+        <div class="form-group">
+          <label>— OR — Image URL</label>
+          <input type="text" name="imageUrl" value="<%= product?.image || '' %>" placeholder="/images/products/red-chilli.jpg" />
+        </div>
+      </div>
+
+      <!-- Appearance & Quality -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-eye"></i> Appearance & Quality</h3>
+        <div class="form-group">
+          <label>Appearance / Color</label>
+          <input type="text" name="appearance" value="<%= product?.appearance || '' %>" placeholder="e.g. Whole pods, bright red to deep red" />
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Form</label>
+            <input type="text" name="form" value="<%= product?.form || '' %>" placeholder="e.g. Whole" />
+          </div>
+          <div class="form-group">
+            <label>Aroma / Flavor</label>
+            <input type="text" name="aromaFlavor" value="<%= product?.aromaFlavor || '' %>" placeholder="e.g. Pungent, hot, spicy" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Quality</label>
+          <input type="text" name="quality" value="<%= product?.quality || '' %>" placeholder="e.g. Premium (Varieties: S4, Teja, 334, Byadgi)" />
+        </div>
+      </div>
+
+      <!-- Lab Specs -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-flask"></i> Lab Specifications</h3>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Moisture</label>
+            <input type="text" name="moisture" value="<%= product?.moisture || '' %>" placeholder="e.g. Max. 12.00%" />
+          </div>
+          <div class="form-group">
+            <label>Total Ash</label>
+            <input type="text" name="totalAsh" value="<%= product?.totalAsh || '' %>" placeholder="e.g. Max. 7.00%" />
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Acid Insoluble Ash</label>
+            <input type="text" name="acidInsoluble" value="<%= product?.acidInsoluble || '' %>" placeholder="e.g. Max. 1.50%" />
+          </div>
+          <div class="form-group">
+            <label>Volatile Oil</label>
+            <input type="text" name="volatileOil" value="<%= product?.volatileOil || '' %>" placeholder="e.g. Min. 1.0 mL/100g" />
+          </div>
+        </div>
+
+        <!-- Extra Specs -->
+        <label class="form-label-standalone">Additional Specifications</label>
+        <div id="extraSpecsWrap">
+          <% if (isEdit && product?.extraSpecs?.length > 0) { %>
+            <% product.extraSpecs.forEach((s, i) => { %>
+            <div class="extra-spec-row">
+              <input type="text" name="extraSpecKey[]" value="<%= s.key %>" placeholder="Parameter name" />
+              <input type="text" name="extraSpecVal[]" value="<%= s.value %>" placeholder="Value" />
+              <button type="button" onclick="this.parentElement.remove()" class="btn-icon text-red"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+        <button type="button" id="addSpecRow" class="btn-outline-sm">
+          <i class="fa-solid fa-plus"></i> Add Specification Row
+        </button>
+      </div>
+
+
+      <!-- Local Names (multilingual) -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-language"></i> Product Name in Other Languages</h3>
+        <p style="font-size:0.82rem;color:#7A6555;margin-bottom:12px">Add the product name in different languages for international buyers.</p>
+        <div id="localNamesWrap">
+          <% if (isEdit && product?.localNames?.length > 0) { %>
+            <% product.localNames.forEach(ln => { %>
+            <div class="extra-spec-row">
+              <input type="text" name="localLang[]" value="<%= ln.language %>" placeholder="Language (e.g. Arabic)" />
+              <input type="text" name="localName[]" value="<%= ln.name %>" placeholder="Product name in that language" />
+              <button type="button" onclick="this.parentElement.remove()" class="btn-icon text-red"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <% }) %>
+          <% } %>
+        </div>
+        <button type="button" id="addLocalName" class="btn-outline-sm"><i class="fa-solid fa-plus"></i> Add Language</button>
+      </div>
+
+      <!-- Settings -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-sliders"></i> Settings</h3>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Display Order</label>
+            <input type="number" name="order" value="<%= product?.order || 0 %>" min="0" />
+          </div>
+          <div class="form-group" style="justify-content:flex-end; padding-top:28px;">
+            <label class="checkbox-label">
+              <input type="checkbox" name="featured" <%= product?.featured ? 'checked' : '' %> />
+              <span>Featured Product</span>
+            </label>
+          </div>
+        </div>
+        <% if (isEdit) { %>
+        <div class="form-group">
+          <label>Visibility</label>
+          <select name="isActive">
+            <option value="true"  <%= product?.isActive !== false ? 'selected' : '' %>>Active (Visible)</option>
+            <option value="false" <%= product?.isActive === false ? 'selected' : '' %>>Hidden</option>
+          </select>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- SEO -->
+      <div class="form-section">
+        <h3 class="form-section__title"><i class="fa-solid fa-magnifying-glass"></i> SEO (Optional)</h3>
+        <div class="form-group">
+          <label>Meta Title</label>
+          <input type="text" name="metaTitle" value="<%= product?.metaTitle || '' %>" placeholder="SEO page title" />
+        </div>
+        <div class="form-group">
+          <label>Meta Description</label>
+          <textarea name="metaDescription" rows="2" placeholder="SEO meta description"><%= product?.metaDescription || '' %></textarea>
+        </div>
+      </div>
+
+    </div><!-- /RIGHT -->
+
+  </div><!-- /form-grid -->
+
+  <div class="form-actions">
+    <a href="/admin/products" class="btn-outline">Cancel</a>
+    <button type="submit" class="btn-primary">
+      <i class="fa-solid fa-<%= isEdit ? 'floppy-disk' : 'plus' %>"></i>
+      <%= isEdit ? 'Save Changes' : 'Add Product' %>
+    </button>
+  </div>
+</form>
+
+<script>
+// Auto-slug
+const nameInput = document.querySelector('[name="name"]');
+const slugField = document.getElementById('slugField');
+if (!slugField.value) {
+  nameInput.addEventListener('input', () => {
+    slugField.value = nameInput.value.toLowerCase().trim()
+      .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+  });
+}
+// Add extra spec row
+document.getElementById('addLocalName').addEventListener('click', () => {
+  const w = document.getElementById('localNamesWrap');
+  const r = document.createElement('div');
+  r.className = 'extra-spec-row';
+  r.innerHTML = `<input type="text" name="localLang[]" placeholder="Language (e.g. Arabic)" /><input type="text" name="localName[]" placeholder="Product name" /><button type="button" onclick="this.parentElement.remove()" class="btn-icon text-red"><i class="fa-solid fa-xmark"></i></button>`;
+  w.appendChild(r);
+});
+document.getElementById('addSpecRow').addEventListener('click', () => {
+  const wrap = document.getElementById('extraSpecsWrap');
+  const row = document.createElement('div');
+  row.className = 'extra-spec-row';
+  row.innerHTML = `
+    <input type="text" name="extraSpecKey[]" placeholder="Parameter name" />
+    <input type="text" name="extraSpecVal[]" placeholder="Value" />
+    <button type="button" onclick="this.parentElement.remove()" class="btn-icon text-red"><i class="fa-solid fa-xmark"></i></button>`;
+  wrap.appendChild(row);
+});
+</script>
+
+<%- include('../_layout_bottom') %>

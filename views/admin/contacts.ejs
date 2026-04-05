@@ -1,0 +1,47 @@
+<%- include('_layout_top') %>
+
+<div class="page-header">
+  <div><h1 class="page-title">Contact Submissions</h1><p class="page-subtitle"><%= contacts.length %> total submissions</p></div>
+</div>
+
+<div class="admin-card">
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Country</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% if (contacts.length > 0) { %>
+          <% contacts.forEach(c => { %>
+          <tr class="<%= c.status==='new'?'row-new':'' %>">
+            <td><strong><%= c.name %></strong></td>
+            <td><a href="mailto:<%= c.email %>"><%= c.email %></a></td>
+            <td><%= c.phone||'—' %></td>
+            <td><%= c.country||'—' %></td>
+            <td><%= c.subject||'—' %></td>
+            <td class="td-truncate" title="<%= c.message %>"><%= c.message.substring(0,60) %>...</td>
+            <td><%= new Date(c.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></td>
+            <td>
+              <form method="POST" action="/admin/contacts/<%= c._id %>/status" style="display:inline">
+                <select name="status" onchange="this.form.submit()" class="status-select">
+                  <option value="new" <%= c.status==='new'?'selected':'' %>>New</option>
+                  <option value="read" <%= c.status==='read'?'selected':'' %>>Read</option>
+                  <option value="replied" <%= c.status==='replied'?'selected':'' %>>Replied</option>
+                </select>
+              </form>
+            </td>
+            <td class="td-actions">
+              <a href="mailto:<%= c.email %>?subject=Re: <%= encodeURIComponent(c.subject||'Your enquiry') %>" class="btn-icon text-blue" title="Reply via email"><i class="fa-solid fa-reply"></i></a>
+              <form method="POST" action="/admin/contacts/<%= c._id %>/delete" onsubmit="return confirm('Delete this submission?')" style="display:inline">
+                <button type="submit" class="btn-icon text-red" title="Delete"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="9" class="td-empty">No contact submissions yet.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('_layout_bottom') %>

@@ -1,0 +1,178 @@
+<%- include('../partials/header') %>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="/">Home</a> <span>/</span> <span>About Us</span>
+    </nav>
+    <h1 class="page-hero__title">About <em>Cielsko</em></h1>
+    <p class="page-hero__subtitle"><%= settings?.about_tagline || 'Passion for Quality. Commitment to Trust.' %></p>
+  </div>
+  <div class="page-hero__pattern"></div>
+</section>
+
+<!-- INTRO SECTION -->
+<section class="section about-intro">
+  <div class="container about-intro__inner">
+    <div class="about-intro__text">
+      <span class="section-label">Our Story</span>
+      <h2 class="section-title">Who We <em>Are</em></h2>
+      <p class="about-intro__lead">At Cielsko, we believe that spices are more than just ingredients — they are the essence of culture, taste, and health.</p>
+      <p>Founded with a vision to bring the finest Indian spices to international markets, Cielsko combines traditional sourcing wisdom with modern quality practices. Our deep-rooted connections with farmers across India's spice heartlands allow us to deliver unparalleled authenticity and freshness in every shipment.</p>
+      <p>Cielsko stands for authenticity, reliability, and value — ensuring every shipment reflects the richness of India's spice heritage. From the turmeric fields of Erode to the pepper vines of Kerala, we bring India's best to the world.</p>
+    </div>
+    <div class="about-intro__stats">
+      <div class="stat-box">
+  <span class="stat-box__num"><%= settings?.about_years || '2+' %></span>
+  <span class="stat-box__label">Years of Experience</span>
+</div>
+<div class="stat-box">
+  <span class="stat-box__num"><%= settings?.about_countries || '10+' %></span>
+  <span class="stat-box__label">Export Countries</span>
+</div>
+<div class="stat-box">
+  <span class="stat-box__num"><%= settings?.about_clients || '100%' %></span>
+  <span class="stat-box__label">Satisfied Clients</span>
+</div>
+<div class="stat-box">
+  <span class="stat-box__num"><%= settings?.about_varieties || '13+' %></span>
+  <span class="stat-box__label">Spice Varieties</span>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section class="section section--cream principles">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Our Foundation</span>
+      <h2 class="section-title">Three Pillars of <em>Excellence</em></h2>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-card__num">01</div>
+        <div class="principle-card__icon"><i class="fa-solid fa-microscope"></i></div>
+        <h3>Quality Assurance</h3>
+        <p>Every batch is carefully tested for purity, color, aroma, and nutritional content. We maintain strict quality protocols at every stage — from farm selection to final packaging.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-card__num">02</div>
+        <div class="principle-card__icon"><i class="fa-solid fa-handshake"></i></div>
+        <h3>Transparent Sourcing</h3>
+        <p>We partner directly with farmers and trusted suppliers across India's spice-rich regions, ensuring fair trade practices and complete supply chain transparency.</p>
+      </div>
+      <div class="principle-card">
+        <div class="principle-card__num">03</div>
+        <div class="principle-card__icon"><i class="fa-solid fa-globe"></i></div>
+        <h3>Global Compliance</h3>
+        <p>All products are processed and packed under FSSAI and export certifications to meet the strictest international standards — from food safety to labeling regulations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section team">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">The People Behind</span>
+      <h2 class="section-title">Meet Our <em>Team</em></h2>
+      <p class="section-subtitle">A passionate group of professionals dedicated to bringing India's finest spices to the world.</p>
+    </div>
+    <div class="team-grid">
+      <% if (team && team.length > 0) { %>
+        <% team.forEach(member => { %>
+        <div class="team-card">
+          <div class="team-card__photo">
+            <img src="<%= member.photo %>" alt="<%= member.name %>" onerror="this.src='/images/placeholder-team.svg'" />
+          </div>
+          <div class="team-card__info">
+            <h3 class="team-card__name"><%= member.name %></h3>
+            <span class="team-card__role"><%= member.designation %></span>
+            <% if (member.bio) { %><p class="team-card__bio"><%= member.bio %></p><% } %>
+            <% if (member.linkedin) { %>
+            <a href="<%= member.linkedin %>" class="team-card__linkedin" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
+            <% } %>
+          </div>
+        </div>
+        <% }) %>
+      <% } else { %>
+        <% const defaultTeam = [
+          {name:'Rohit Prajapati', role:'Founder'},
+          {name:'Shivani Julaha', role:'Chief Executive Officer'},
+          {name:'Rahul Kumar', role:'Chief Supply Chain Officer'},
+          {name:'Ankit Singh Thakur', role:'Chief Digital Officer'},
+          {name:'Kajal Prajapati', role:'Financial Officer'},
+        ]; %>
+        <% defaultTeam.forEach(m => { %>
+        <div class="team-card">
+          <div class="team-card__photo team-card__photo--placeholder">
+            <span><%= m.name.charAt(0) %></span>
+          </div>
+          <div class="team-card__info">
+            <h3 class="team-card__name"><%= m.name %></h3>
+            <span class="team-card__role"><%= m.role %></span>
+          </div>
+        </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- CORE PRODUCTS -->
+<section class="section section--dark core-products">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label section-label--light">Product Range</span>
+      <h2 class="section-title section-title--light">Our Core <em>Products</em></h2>
+    </div>
+    <div class="core-products-list">
+      <div class="core-product-item"><span>🟡</span><div><strong>Turmeric (Whole & Powder)</strong><p>Rich color and high curcumin content.</p></div></div>
+      <div class="core-product-item"><span>🍂</span><div><strong>Cinnamon</strong><p>Naturally sweet and aromatic.</p></div></div>
+      <div class="core-product-item"><span>🌿</span><div><strong>Cardamom</strong><p>Premium-grade, hand-selected pods.</p></div></div>
+      <div class="core-product-item"><span>⚫</span><div><strong>Black Pepper</strong><p>Bold flavor with strong essential oil content.</p></div></div>
+      <div class="core-product-item"><span>🌶️</span><div><strong>Cumin, Coriander, Cloves, Chili</strong><p>Available in bulk and private-label packaging.</p></div></div>
+    </div>
+    <p class="core-products-note">All products are lab-tested, hygienically processed, and export-ready with customizable packaging options for brands and distributors.</p>
+    <div class="section-cta">
+      <a href="/products" class="btn btn--gold btn--lg">Explore All Products</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="section why-us">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Why Cielsko</span>
+      <h2 class="section-title">Your Trusted Partner in <em>Indian Spice Exports</em></h2>
+      <p class="section-subtitle">Book Now — Premium Quality Whole Spices</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-card__icon"><i class="fa-solid fa-certificate"></i></div><h3>Certified Quality</h3><p>Compliant with FSSAI and international export standards.</p></div>
+      <div class="why-card"><div class="why-card__icon"><i class="fa-solid fa-tags"></i></div><h3>Competitive Pricing</h3><p>Strong sourcing network ensures cost efficiency.</p></div>
+      <div class="why-card"><div class="why-card__icon"><i class="fa-solid fa-boxes-stacked"></i></div><h3>Consistent Supply</h3><p>Reliable fulfillment for large and recurring orders.</p></div>
+      <div class="why-card"><div class="why-card__icon"><i class="fa-solid fa-box-open"></i></div><h3>Private Label Options</h3><p>Custom packaging for your brand identity.</p></div>
+      <div class="why-card"><div class="why-card__icon"><i class="fa-solid fa-earth-asia"></i></div><h3>Global Reach</h3><p>Serving importers and food businesses across Asia, Europe, and the Middle East.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <div class="cta-banner__pattern"></div>
+  <div class="container cta-banner__inner">
+    <div class="cta-banner__text">
+      <h2>Partner with <em>Cielsko</em></h2>
+      <p>Whether you are a wholesaler, distributor, or retailer — Cielsko is your trusted spice export partner.</p>
+    </div>
+    <div class="cta-banner__actions">
+      <a href="/contact" class="btn btn--gold btn--lg">Contact Us Today</a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

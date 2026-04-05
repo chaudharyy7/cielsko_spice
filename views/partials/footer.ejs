@@ -1,0 +1,68 @@
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <div class="container footer__grid">
+        <div class="footer__brand">
+          <a href="/" class="logo logo--light">
+            <% if (settings?.site_logo) { %>
+              <img src="<%= settings.site_logo %>" alt="Cielsko Logo" class="logo__img logo__img--light" />
+            <% } else { %>
+              <span class="logo__icon">🌶️</span>
+              <div class="logo__text"><span class="logo__name">Cielsko</span><span class="logo__tagline">Spice Exporters</span></div>
+            <% } %>
+          </a>
+          <p class="footer__desc">At Cielsko, we believe that spices are more than just ingredients — they are the essence of culture, taste, and health.</p>
+          <div class="footer__social">
+            <a href="<%= settings?.contact_instagram || 'https://instagram.com' %>" target="_blank" rel="noopener" class="footer__social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="<%= settings?.contact_linkedin || 'https://linkedin.com' %>" target="_blank" rel="noopener" class="footer__social-link" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__title">Company</h4>
+          <ul class="footer__links">
+            <li><a href="/">Home</a></li><li><a href="/about">About Us</a></li>
+            <li><a href="/products">Products</a></li><li><a href="/certificates">Certificates</a></li>
+            <li><a href="/blog">Blog</a></li><li><a href="/contact">Contact Us</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__title">Legal</h4>
+          <ul class="footer__links">
+            <li><a href="/privacy-policy">Privacy Policy</a></li>
+            <li><a href="/terms-conditions">Terms & Conditions</a></li>
+            <li><a href="/disclaimer">Disclaimer</a></li>
+            <li><a href="/cookie-policy">Cookie Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4 class="footer__title">Contact</h4>
+          <ul class="footer__contact">
+            <li><i class="fa-solid fa-location-dot"></i><span><%= settings?.contact_address || 'P50, P Block, P Extension, Mohan Garden, New Delhi – 110059, India' %></span></li>
+            <li><i class="fa-solid fa-envelope"></i><a href="mailto:<%= settings?.contact_email || 'info@cielsko.com' %>"><%= settings?.contact_email || 'info@cielsko.com' %></a></li>
+            <li><i class="fa-solid fa-phone"></i><a href="tel:<%= settings?.contact_phone1 || '+917053086259' %>"><%= settings?.contact_phone1 || '+91-7053086259' %></a></li>
+            <% if (settings?.contact_phone2) { %><li><i class="fa-solid fa-phone"></i><a href="tel:<%= settings.contact_phone2 %>"><%= settings.contact_phone2 %></a></li><% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container footer__bottom-inner">
+        <p>&copy; 2025 Cielsko. All Rights Reserved.</p>
+        <p>Crafted with <span style="color:#E8601C">❤</span> in India</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-banner__inner">
+      <p>🍪 We use cookies to enhance your experience. By continuing, you agree to our <a href="/cookie-policy">Cookie Policy</a>.</p>
+      <button class="btn btn--primary btn--sm" id="acceptCookies">Accept</button>
+      <button class="btn btn--outline btn--sm" id="declineCookies">Decline</button>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+  <script src="/js/main.js"></script>
+</body>
+</html>

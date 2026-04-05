@@ -1,0 +1,97 @@
+<%- include('_layout_top') %>
+
+<div class="page-header">
+  <div><h1 class="page-title">Our Team</h1><p class="page-subtitle"><%= team.length %> team members</p></div>
+  <button onclick="document.getElementById('addTeamModal').classList.add('open')" class="btn-primary">
+    <i class="fa-solid fa-plus"></i> Add Member
+  </button>
+</div>
+
+<div class="team-admin-grid">
+  <% if (team.length > 0) { %>
+    <% team.forEach(m => { %>
+    <div class="team-admin-card">
+      <div class="team-admin-card__photo">
+        <img src="<%= m.photo %>" alt="<%= m.name %>" onerror="this.src='/images/placeholder-team.svg'" />
+      </div>
+      <div class="team-admin-card__info">
+        <h3><%= m.name %></h3>
+        <span class="badge badge--orange"><%= m.designation %></span>
+        <% if (m.bio) { %><p class="text-muted" style="font-size:0.82rem;margin-top:6px"><%= m.bio.substring(0,80) %>...</p><% } %>
+        <div class="team-admin-card__order">Order: <%= m.order %></div>
+      </div>
+      <div class="team-admin-card__actions">
+        <button class="btn-icon text-blue"
+          onclick="openEditTeamModal('<%= m._id %>','<%= m.name %>','<%= m.designation %>','<%= (m.bio||'').replace(/'/g,`\\'`) %>','<%= m.photo %>','<%= m.linkedin||'' %>','<%= m.order %>')">
+          <i class="fa-solid fa-pen"></i> Edit
+        </button>
+        <form method="POST" action="/admin/team/<%= m._id %>/delete" onsubmit="return confirm('Remove <%= m.name %> from team?')" style="display:inline">
+          <button type="submit" class="btn-icon text-red"><i class="fa-solid fa-trash"></i> Remove</button>
+        </form>
+      </div>
+    </div>
+    <% }) %>
+  <% } else { %>
+    <div class="empty-state"><i class="fa-solid fa-users"></i><p>No team members yet.</p></div>
+  <% } %>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal" id="addTeamModal">
+  <div class="modal__backdrop" onclick="this.parentElement.classList.remove('open')"></div>
+  <div class="modal__box">
+    <div class="modal__header"><h2>Add Team Member</h2><button onclick="document.getElementById('addTeamModal').classList.remove('open')" class="modal__close">&times;</button></div>
+    <form method="POST" action="/admin/team/add" enctype="multipart/form-data">
+      <div class="form-row-2">
+        <div class="form-group"><label>Full Name *</label><input type="text" name="name" required placeholder="e.g. Rohit Prajapati" /></div>
+        <div class="form-group"><label>Designation *</label><input type="text" name="designation" required placeholder="e.g. Founder" /></div>
+      </div>
+      <div class="form-group"><label>Short Bio</label><textarea name="bio" rows="2" placeholder="Brief description..."></textarea></div>
+      <div class="form-group"><label>Upload Photo</label><input type="file" name="photoFile" accept="image/*" class="file-input" /></div>
+      <div class="form-group"><label>— OR — Photo URL / Google Drive URL</label><input type="text" name="photoUrl" placeholder="https://drive.google.com/file/d/..." /></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>LinkedIn URL</label><input type="url" name="linkedin" placeholder="https://linkedin.com/in/..." /></div>
+        <div class="form-group"><label>Display Order</label><input type="number" name="order" value="0" min="0" /></div>
+      </div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Member</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="editTeamModal">
+  <div class="modal__backdrop" onclick="this.parentElement.classList.remove('open')"></div>
+  <div class="modal__box">
+    <div class="modal__header"><h2>Edit Team Member</h2><button onclick="document.getElementById('editTeamModal').classList.remove('open')" class="modal__close">&times;</button></div>
+    <form method="POST" id="editTeamForm" enctype="multipart/form-data">
+      <div class="team-edit-preview"><img id="editTeamPhoto" src="" alt="" onerror="this.src='/images/placeholder-team.svg'" /></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>Full Name *</label><input type="text" name="name" id="editTeamName" required /></div>
+        <div class="form-group"><label>Designation *</label><input type="text" name="designation" id="editTeamRole" required /></div>
+      </div>
+      <div class="form-group"><label>Short Bio</label><textarea name="bio" rows="2" id="editTeamBio"></textarea></div>
+      <div class="form-group"><label>Replace Photo</label><input type="file" name="photoFile" accept="image/*" class="file-input" /></div>
+      <div class="form-group"><label>— OR — Photo URL / Google Drive URL</label><input type="text" name="photoUrl" id="editTeamPhotoUrl" /></div>
+      <div class="form-row-2">
+        <div class="form-group"><label>LinkedIn URL</label><input type="url" name="linkedin" id="editTeamLinkedin" /></div>
+        <div class="form-group"><label>Display Order</label><input type="number" name="order" id="editTeamOrder" min="0" /></div>
+      </div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openEditTeamModal(id, name, role, bio, photo, linkedin, order) {
+  document.getElementById('editTeamForm').action = '/admin/team/' + id + '/edit';
+  document.getElementById('editTeamName').value = name;
+  document.getElementById('editTeamRole').value = role;
+  document.getElementById('editTeamBio').value = bio;
+  document.getElementById('editTeamPhotoUrl').value = photo;
+  document.getElementById('editTeamLinkedin').value = linkedin;
+  document.getElementById('editTeamOrder').value = order;
+  document.getElementById('editTeamPhoto').src = photo;
+  document.getElementById('editTeamModal').classList.add('open');
+}
+</script>
+<%- include('_layout_bottom') %>

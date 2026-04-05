@@ -1,0 +1,98 @@
+<%- include('_layout_top') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Certificates</h1>
+    <p class="page-subtitle"><%= certs.length %> certificates</p>
+  </div>
+  <button onclick="document.getElementById('addCertModal').classList.add('open')" class="btn-primary">
+    <i class="fa-solid fa-plus"></i> Add Certificate
+  </button>
+</div>
+
+<div class="certs-admin-grid">
+  <% if (certs.length > 0) { %>
+    <% certs.forEach(cert => { %>
+    <div class="cert-admin-card">
+      <div class="cert-admin-card__img">
+        <img src="<%= cert.image %>" alt="<%= cert.name %>"
+          onerror="this.src='/images/placeholder-cert.svg'" />
+      </div>
+      <div class="cert-admin-card__body">
+        <h3><%= cert.name %></h3>
+        <p class="text-muted"><%= cert.issuer || '' %></p>
+        <p><%= cert.description || '' %></p>
+      </div>
+      <div class="cert-admin-card__actions">
+        <button onclick="openEditModal('<%= cert._id %>', '<%= cert.name %>', '<%= cert.description || '' %>', '<%= cert.issuer || '' %>', '<%= cert.image %>', '<%= cert.order || 0 %>')"
+          class="btn-icon text-blue" title="Edit"><i class="fa-solid fa-pen"></i> Edit</button>
+        <form method="POST" action="/admin/certificates/<%= cert._id %>/delete"
+          onsubmit="return confirm('Delete this certificate?')" style="display:inline">
+          <button type="submit" class="btn-icon text-red" title="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
+        </form>
+      </div>
+    </div>
+    <% }) %>
+  <% } else { %>
+    <div class="empty-state">
+      <i class="fa-solid fa-award"></i>
+      <p>No certificates yet. Add your first certificate.</p>
+    </div>
+  <% } %>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal" id="addCertModal">
+  <div class="modal__backdrop" onclick="this.parentElement.classList.remove('open')"></div>
+  <div class="modal__box">
+    <div class="modal__header">
+      <h2>Add Certificate</h2>
+      <button onclick="document.getElementById('addCertModal').classList.remove('open')" class="modal__close">&times;</button>
+    </div>
+    <form method="POST" action="/admin/certificates/add" enctype="multipart/form-data">
+      <div class="form-group"><label>Certificate Name *</label><input type="text" name="name" required placeholder="e.g. FSSAI Licence" /></div>
+      <div class="form-group"><label>Issuer</label><input type="text" name="issuer" placeholder="e.g. FSSAI, Govt. of India" /></div>
+      <div class="form-group"><label>Description</label><textarea name="description" rows="2" placeholder="Brief description"></textarea></div>
+      <div class="form-group"><label>Upload Image / PDF</label><input type="file" name="imageFile" accept="image/*,.pdf" class="file-input" /></div>
+      <div class="form-group"><label>— OR — Image URL</label><input type="text" name="imageUrl" placeholder="/images/certificates/gst.jpg" /></div>
+      <div class="form-group"><label>Display Order</label><input type="number" name="order" value="0" /></div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-plus"></i> Add Certificate</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal" id="editCertModal">
+  <div class="modal__backdrop" onclick="this.parentElement.classList.remove('open')"></div>
+  <div class="modal__box">
+    <div class="modal__header">
+      <h2>Edit Certificate</h2>
+      <button onclick="document.getElementById('editCertModal').classList.remove('open')" class="modal__close">&times;</button>
+    </div>
+    <form method="POST" id="editCertForm" enctype="multipart/form-data">
+      <div class="cert-edit-preview"><img id="editCertPreview" src="" alt="" /></div>
+      <div class="form-group"><label>Certificate Name *</label><input type="text" name="name" id="editCertName" required /></div>
+      <div class="form-group"><label>Issuer</label><input type="text" name="issuer" id="editCertIssuer" /></div>
+      <div class="form-group"><label>Description</label><textarea name="description" rows="2" id="editCertDesc"></textarea></div>
+      <div class="form-group"><label>Replace Image</label><input type="file" name="imageFile" accept="image/*,.pdf" class="file-input" /></div>
+      <div class="form-group"><label>— OR — Image URL</label><input type="text" name="imageUrl" id="editCertUrl" /></div>
+      <div class="form-group"><label>Display Order</label><input type="number" name="order" id="editCertOrder" /></div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button></div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openEditModal(id, name, desc, issuer, img, order) {
+  document.getElementById('editCertForm').action = '/admin/certificates/' + id + '/edit';
+  document.getElementById('editCertName').value = name;
+  document.getElementById('editCertDesc').value = desc;
+  document.getElementById('editCertIssuer').value = issuer;
+  document.getElementById('editCertUrl').value = img;
+  document.getElementById('editCertOrder').value = order;
+  document.getElementById('editCertPreview').src = img;
+  document.getElementById('editCertModal').classList.add('open');
+}
+</script>
+
+<%- include('_layout_bottom') %>

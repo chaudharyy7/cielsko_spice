@@ -1,0 +1,104 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb"><a href="/">Home</a> <span>/</span> <span>Certificates</span></nav>
+    <h1 class="page-hero__title">Our <em>Certifications</em></h1>
+    <p class="page-hero__subtitle">Compliance, Trust & International Standards</p>
+  </div>
+  <div class="page-hero__pattern"></div>
+</section>
+
+<section class="section certs-page">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Verified & Compliant</span>
+      <h2 class="section-title">Certificates We <em>Hold</em></h2>
+      <p class="section-subtitle">Every certificate is a testament to our commitment to quality, compliance, and trust in the global spice trade.</p>
+    </div>
+
+    <div class="certs-grid">
+      <% if (certificates && certificates.length > 0) { %>
+        <% certificates.forEach(cert => { %>
+        <div class="cert-card">
+          <div class="cert-card__img" data-lightbox="<%= cert.image %>">
+            <img src="<%= cert.image %>" alt="<%= cert.name %>" loading="lazy" onerror="this.src='/images/placeholder-cert.svg'" />
+            <div class="cert-card__overlay">
+              <button class="cert-card__zoom" onclick="openLightbox('<%= cert.image %>', '<%= cert.name %>')" aria-label="View certificate">
+                <i class="fa-solid fa-magnifying-glass-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div class="cert-card__body">
+            <h3><%= cert.name %></h3>
+            <% if (cert.issuer) { %><p class="cert-card__issuer"><i class="fa-solid fa-building"></i> <%= cert.issuer %></p><% } %>
+            <% if (cert.description) { %><p><%= cert.description %></p><% } %>
+          </div>
+        </div>
+        <% }) %>
+      <% } else { %>
+        <% const defaultCerts = [
+          {name:'GST Certificate', icon:'fa-file-invoice-dollar', color:'#2D5016', desc:'Goods and Services Tax registration confirming our legal business status in India.'},
+          {name:'MSME Certificate', icon:'fa-industry', color:'#E8601C', desc:'Ministry of MSME recognition validating our enterprise classification and eligibility.'},
+          {name:'IEC Certificate', icon:'fa-ship', color:'#D4A017', desc:'Import Export Code — mandatory license for conducting international trade from India.'},
+          {name:'FSSAI Licence', icon:'fa-shield-halved', color:'#8B4513', desc:'Food Safety and Standards Authority of India license ensuring food safety compliance.'},
+          {name:'FiLLiP Approval Letter', icon:'fa-file-circle-check', color:'#2C1810', desc:'Firm & LLP registration approval confirming our corporate identity.'},
+          {name:'RCMC Certificate', icon:'fa-award', color:'#556B2F', desc:'Registration cum Membership Certificate from APEDA for spice export authorization.'},
+        ]; %>
+        <% defaultCerts.forEach(cert => { %>
+        <div class="cert-card cert-card--placeholder">
+          <div class="cert-card__img cert-card__img--icon" style="background: linear-gradient(135deg, <%= cert.color %>22, <%= cert.color %>44)">
+            <i class="fa-solid <%= cert.icon %>" style="color:<%= cert.color %>; font-size:3rem;"></i>
+            <div class="cert-card__overlay">
+              <span class="cert-card__coming">Image Coming Soon</span>
+            </div>
+          </div>
+          <div class="cert-card__body">
+            <h3><%= cert.name %></h3>
+            <p><%= cert.desc %></p>
+          </div>
+        </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Certificate viewer">
+  <div class="lightbox__backdrop" onclick="closeLightbox()"></div>
+  <div class="lightbox__content">
+    <button class="lightbox__close" onclick="closeLightbox()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    <img id="lightboxImg" src="" alt="" />
+    <p id="lightboxCaption"></p>
+  </div>
+</div>
+
+<section class="cta-banner">
+  <div class="cta-banner__pattern"></div>
+  <div class="container cta-banner__inner">
+    <div class="cta-banner__text">
+      <h2>Need More <em>Documentation?</em></h2>
+      <p>Contact us for detailed certificate copies, lab test reports, or product specifications for your compliance requirements.</p>
+    </div>
+    <div class="cta-banner__actions">
+      <a href="/contact" class="btn btn--gold btn--lg">Request Documents</a>
+    </div>
+  </div>
+</section>
+
+<script>
+function openLightbox(src, caption) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxCaption').textContent = caption;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+<%- include('../partials/footer') %>

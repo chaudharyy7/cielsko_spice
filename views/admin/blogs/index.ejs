@@ -1,0 +1,46 @@
+<%- include('../_layout_top') %>
+
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Blog Posts</h1>
+    <p class="page-subtitle"><%= blogs.length %> total posts</p>
+  </div>
+  <a href="/admin/blogs/new" class="btn-primary"><i class="fa-solid fa-plus"></i> Write New Post</a>
+</div>
+
+<div class="admin-card">
+  <div class="table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Image</th><th>Title</th><th>Author</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% if (blogs.length > 0) { %>
+          <% blogs.forEach(b => { %>
+          <tr>
+            <td><img src="<%= b.image %>" alt="<%= b.title %>" class="table-thumb" onerror="this.src='/images/placeholder-blog.svg'" /></td>
+            <td>
+              <strong><%= b.title.substring(0,60) %><%= b.title.length>60?'...':'' %></strong><br/>
+              <small class="text-muted"><%= b.slug %></small>
+            </td>
+            <td><%= b.author %></td>
+            <td><%= new Date(b.publishedAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></td>
+            <td><span class="badge badge--<%= b.isPublished?'green':'red' %>"><%= b.isPublished?'Published':'Draft' %></span></td>
+            <td class="td-actions">
+              <a href="/blog/<%= b.slug %>" target="_blank" class="btn-icon" title="View"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              <a href="/admin/blogs/<%= b._id %>/edit" class="btn-icon text-blue" title="Edit"><i class="fa-solid fa-pen"></i></a>
+              <form method="POST" action="/admin/blogs/<%= b._id %>/delete" onsubmit="return confirm('Delete this blog post?')" style="display:inline">
+                <button type="submit" class="btn-icon text-red" title="Delete"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="6" class="td-empty">No blog posts yet. <a href="/admin/blogs/new">Write your first post →</a></td></tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../_layout_bottom') %>
