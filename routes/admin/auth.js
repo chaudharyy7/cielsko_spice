@@ -14,11 +14,21 @@ router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!username || !password)
-      return res.render('admin/login', { title: 'Admin Login', error: 'Please enter username and password.' });
+      return res.render('admin/login', {
+        title: 'Admin Login',
+        error: 'Please enter username and password.',
+      });
 
-    const user = await User.findOne({ username: username.toLowerCase().trim(), isActive: true });
+    const user = await User.findOne({
+      username: username.toLowerCase().trim(),
+      isActive: true,
+    });
+
     if (!user || !(await user.comparePassword(password)))
-      return res.render('admin/login', { title: 'Admin Login', error: 'Invalid username or password.' });
+      return res.render('admin/login', {
+        title: 'Admin Login',
+        error: 'Invalid username or password.',
+      });
 
     const token = generateToken(user._id);
     res.cookie('adminToken', token, {
@@ -29,7 +39,10 @@ router.post('/login', async (req, res) => {
     });
     res.redirect('/admin');
   } catch (err) {
-    res.render('admin/login', { title: 'Admin Login', error: 'Something went wrong. Try again.' });
+    res.render('admin/login', {
+      title: 'Admin Login',
+      error: 'Something went wrong. Try again.',
+    });
   }
 });
 
@@ -50,7 +63,62 @@ router.get('/users', requireAuth, async (req, res) => {
   });
 });
 
-// POST /admin/users — add new admin user
+// ⚠️ IMPORTANT: This MUST come BEFORE /users/:id routes
+// POST /admin/users/change-my-credentials
+router.post('/users/change-my-credentials', requireAuth, async (req, res) => {
+  try {
+    const { newUsername, currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword)
+      return res.redirect('/admin/users?error=Current+password+is+required');
+
+    const user = await User.findById(req.user._id);
+    if (!user)
+      return res.redirect('/admin/users?error=User+not+found');
+
+    // Verify current password
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch)
+      return res.redirect('/admin/users?error=Current+password+is+incorrect');
+
+    let changed = false;
+
+    // Update username if provided and different
+    if (newUsername && newUsername.trim() !== '' && newUsername.trim() !== user.username) {
+      const taken = await User.findOne({
+        username: newUsername.toLowerCase().trim(),
+        _id: { $ne: user._id },
+      });
+      if (taken)
+        return res.redirect('/admin/users?error=That+username+is+already+taken');
+      user.username = newUsername.toLowerCase().trim();
+      changed = true;
+    }
+
+    // Update password if provided
+    if (newPassword && newPassword.trim() !== '') {
+      if (newPassword.length < 4)
+        return res.redirect('/admin/users?error=New+password+must+be+at+least+4+characters');
+      if (newPassword !== confirmPassword)
+        return res.redirect('/admin/users?error=Passwords+do+not+match');
+      user.password = newPassword;
+      changed = true;
+    }
+
+    if (!changed)
+      return res.redirect('/admin/users?error=No+changes+were+made');
+
+    await user.save();
+
+    // Clear cookie — force re-login with new credentials
+    res.clearCookie('adminToken');
+    res.redirect('/admin/login');
+  } catch (err) {
+    res.redirect('/admin/users?error=' + encodeURIComponent(err.message));
+  }
+});
+
+// POST /admin/users — add new admin
 router.post('/users', requireAuth, async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -66,33 +134,21 @@ router.post('/users', requireAuth, async (req, res) => {
       return res.redirect('/admin/users?error=Username+already+exists');
 
     const newUser = new User({
-      username: username.toLowerCase().trim(),
-      password: password,
-      role: 'admin',
+      username:  username.toLowerCase().trim(),
+      password:  password,
+      role:      'admin',
       createdBy: req.user._id,
-      isActive: true,
+      isActive:  true,
     });
     await newUser.save();
 
-    res.redirect('/admin/users?success=User+' + encodeURIComponent(username) + '+added+successfully');
+    res.redirect('/admin/users?success=' + encodeURIComponent(username) + '+added+successfully');
   } catch (err) {
     res.redirect('/admin/users?error=' + encodeURIComponent(err.message));
   }
 });
 
-// POST /admin/users/:id/delete — disable user
-router.post('/users/:id/delete', requireAuth, async (req, res) => {
-  try {
-    if (req.params.id === req.user._id.toString())
-      return res.redirect('/admin/users?error=You+cannot+delete+yourself');
-    await User.findByIdAndUpdate(req.params.id, { isActive: false });
-    res.redirect('/admin/users?success=User+disabled+successfully');
-  } catch (err) {
-    res.redirect('/admin/users?error=' + encodeURIComponent(err.message));
-  }
-});
-
-// POST /admin/users/:id/reset-password — reset another user's password
+// POST /admin/users/:id/reset-password
 router.post('/users/:id/reset-password', requireAuth, async (req, res) => {
   try {
     const { newPassword } = req.body;
@@ -111,42 +167,13 @@ router.post('/users/:id/reset-password', requireAuth, async (req, res) => {
   }
 });
 
-// POST /admin/users/change-my-credentials — logged in user changes own username/password
-router.post('/users/change-my-credentials', requireAuth, async (req, res) => {
+// POST /admin/users/:id/delete
+router.post('/users/:id/delete', requireAuth, async (req, res) => {
   try {
-    const { newUsername, currentPassword, newPassword, confirmPassword } = req.body;
-
-    const user = await User.findById(req.user._id);
-    if (!user)
-      return res.redirect('/admin/users?error=User+not+found');
-
-    // Verify current password
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch)
-      return res.redirect('/admin/users?error=Current+password+is+incorrect');
-
-    // Update username if provided
-    if (newUsername && newUsername.trim() && newUsername.trim() !== user.username) {
-      const exists = await User.findOne({ username: newUsername.toLowerCase().trim(), _id: { $ne: user._id } });
-      if (exists)
-        return res.redirect('/admin/users?error=That+username+is+already+taken');
-      user.username = newUsername.toLowerCase().trim();
-    }
-
-    // Update password if provided
-    if (newPassword) {
-      if (newPassword.length < 4)
-        return res.redirect('/admin/users?error=New+password+must+be+at+least+4+characters');
-      if (newPassword !== confirmPassword)
-        return res.redirect('/admin/users?error=New+passwords+do+not+match');
-      user.password = newPassword;
-    }
-
-    await user.save();
-
-    // Re-issue token with updated info and force re-login
-    res.clearCookie('adminToken');
-    res.redirect('/admin/login');
+    if (req.params.id === req.user._id.toString())
+      return res.redirect('/admin/users?error=You+cannot+delete+yourself');
+    await User.findByIdAndUpdate(req.params.id, { isActive: false });
+    res.redirect('/admin/users?success=User+disabled+successfully');
   } catch (err) {
     res.redirect('/admin/users?error=' + encodeURIComponent(err.message));
   }
