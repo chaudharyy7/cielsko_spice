@@ -1,88 +1,61 @@
 <%- include('_layout_top') %>
 
 <div class="page-header">
-  <div><h1 class="page-title">Admin Users</h1><p class="page-subtitle">Manage who can access the admin panel.</p></div>
+  <div><h1 class="page-title">Admin Users</h1><p class="page-subtitle">Only admins can add new admin users. No public registration.</p></div>
   <button onclick="document.getElementById('addUserModal').classList.add('open')" class="btn-primary">
     <i class="fa-solid fa-plus"></i> Add Admin User
   </button>
 </div>
 
-<!-- Users Table -->
-<div class="admin-card" style="margin-bottom:24px">
+<div class="admin-card">
   <div class="table-wrap">
     <table class="admin-table">
-      <thead>
-        <tr><th>Username</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
-      </thead>
+      <thead><tr><th>Username</th><th>Role</th><th>Created By</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
       <tbody>
         <% users.forEach(u => { %>
         <tr>
           <td>
             <strong><%= u.username %></strong>
-            <% if (u._id.toString() === user._id.toString()) { %>
-              <span class="badge badge--blue" style="margin-left:6px">You</span>
-            <% } %>
-          </td>
-          <td><span class="badge badge--orange"><%= u.role %></span></td>
-          <td><span class="badge badge--<%= u.isActive ? 'green' : 'red' %>"><%= u.isActive ? 'Active' : 'Disabled' %></span></td>
-          <td><%= new Date(u.createdAt).toLocaleDateString('en-IN') %></td>
-          <td class="td-actions">
-            <% if (u._id.toString() !== user._id.toString()) { %>
-              <button class="btn-icon text-blue" title="Reset password"
-                onclick="openResetModal('<%= u._id %>', '<%= u.username %>')">
-                <i class="fa-solid fa-key"></i>
-              </button>
-              <form method="POST" action="/admin/users/<%= u._id %>/delete"
-                onsubmit="return confirm('Disable <%= u.username %>?')" style="display:inline">
-                <button type="submit" class="btn-icon text-red" title="Disable">
-                  <i class="fa-solid fa-user-slash"></i>
-                </button>
-              </form>
-            <% } else { %>
-              <span style="font-size:0.78rem;color:var(--adm-muted)">Use form below to edit</span>
+
+          <% if (u._id.toString() === user._id.toString()) { %>
+          <span class="badge badge--blue">You</span>
+          <% } %>
+        </td>
+        <td>
+          <span class="badge badge--orange"><%= u.role %></span>
+        </td>
+        <td>
+          <%= u.createdBy ? u.createdBy.toString().substring(0,8)+'...' : 'System' %>
+        </td>
+        <td>
+          <span class="badge badge--<%= u.isActive ? 'green' : 'red' %>">
+            <%= u.isActive ? 'Active' : 'Disabled' %>
+          </span>
+        </td>
+        <td>
+          <%= new Date(u.createdAt).toLocaleDateString('en-IN') %>
+        </td>
+        <td class="td-actions">
+          <% if (u._id.toString() !== user._id.toString()) { %>
+            <button class="btn-icon text-blue" title="Reset password"
+            onclick="openResetModal('<%= u._id %>', '<%= u.username %>')">
+            <i class="fa-solid fa-key"></i>
+          </button>
+          
+          <form method="POST" action="/admin/users/<%= u._id %>/delete"
+            onsubmit="return confirm('Disable user <%= u.username %>?')" style="display:inline">
+            <button type="submit" class="btn-icon text-red" title="Disable user">
+              <i class="fa-solid fa-user-slash"></i>
+            </button>
+          </form>
+          <% } else { %>
+            <span class="text-muted" style="font-size:0.8rem">Current session</span>
             <% } %>
           </td>
         </tr>
         <% }) %>
       </tbody>
     </table>
-  </div>
-</div>
-
-<!-- Change My Own Credentials -->
-<div class="admin-card">
-  <div class="admin-card__header">
-    <h2 class="section-heading" style="margin:0"><i class="fa-solid fa-user-pen"></i> Change My Username / Password</h2>
-  </div>
-  <div style="padding:24px">
-    <p style="font-size:0.88rem;color:var(--adm-muted);margin-bottom:20px">
-      After saving, you will be logged out and need to sign in again with your new credentials.
-    </p>
-    <form method="POST" action="/admin/users/change-my-credentials">
-      <div class="settings-grid" style="grid-template-columns:1fr 1fr">
-        <div class="form-group">
-          <label>New Username <span style="font-weight:400;text-transform:none">(leave blank to keep current)</span></label>
-          <input type="text" name="newUsername" placeholder="<%= user.username %>" autocomplete="off" />
-        </div>
-        <div class="form-group">
-          <label>Current Password *</label>
-          <input type="password" name="currentPassword" required placeholder="Your current password" autocomplete="current-password" />
-        </div>
-        <div class="form-group">
-          <label>New Password <span style="font-weight:400;text-transform:none">(leave blank to keep current)</span></label>
-          <input type="password" name="newPassword" placeholder="New password" autocomplete="new-password" />
-        </div>
-        <div class="form-group">
-          <label>Confirm New Password</label>
-          <input type="password" name="confirmPassword" placeholder="Repeat new password" autocomplete="new-password" />
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">
-          <i class="fa-solid fa-floppy-disk"></i> Save Credentials
-        </button>
-      </div>
-    </form>
   </div>
 </div>
 
@@ -94,23 +67,14 @@
       <h2>Add Admin User</h2>
       <button onclick="document.getElementById('addUserModal').classList.remove('open')" class="modal__close">&times;</button>
     </div>
-    <div class="admin-flash admin-flash--info" style="margin-bottom:16px;border-radius:8px;padding:12px 16px">
+    <div class="admin-flash admin-flash--info" style="margin-bottom:16px">
       <i class="fa-solid fa-shield-halved"></i>
       New users will have full admin access. Only add trusted team members.
     </div>
     <form method="POST" action="/admin/users">
-      <div class="form-group">
-        <label>Username *</label>
-        <input type="text" name="username" required placeholder="e.g. rohit" autocomplete="off" />
-      </div>
-      <div class="form-group">
-        <label>Password *</label>
-        <input type="password" name="password" required placeholder="Minimum 4 characters" autocomplete="new-password" minlength="4" />
-      </div>
-      <div class="form-actions">
-        <button type="button" onclick="document.getElementById('addUserModal').classList.remove('open')" class="btn-outline">Cancel</button>
-        <button type="submit" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Add User</button>
-      </div>
+      <div class="form-group"><label>Username *</label><input type="text" name="username" required placeholder="e.g. rohit" autocomplete="off" /></div>
+      <div class="form-group"><label>Password *</label><input type="password" name="password" required placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6" /></div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-user-plus"></i> Add User</button></div>
     </form>
   </div>
 </div>
@@ -123,18 +87,10 @@
       <h2>Reset Password</h2>
       <button onclick="document.getElementById('resetModal').classList.remove('open')" class="modal__close">&times;</button>
     </div>
-    <p style="margin-bottom:16px;color:var(--adm-muted);font-size:0.88rem">
-      Resetting password for: <strong id="resetUsername"></strong>
-    </p>
+    <p style="margin-bottom:16px;color:var(--text-mid)">Resetting password for: <strong id="resetUsername"></strong></p>
     <form method="POST" id="resetForm">
-      <div class="form-group">
-        <label>New Password *</label>
-        <input type="password" name="newPassword" required placeholder="Minimum 4 characters" minlength="4" autocomplete="new-password" />
-      </div>
-      <div class="form-actions">
-        <button type="button" onclick="document.getElementById('resetModal').classList.remove('open')" class="btn-outline">Cancel</button>
-        <button type="submit" class="btn-primary"><i class="fa-solid fa-key"></i> Reset Password</button>
-      </div>
+      <div class="form-group"><label>New Password *</label><input type="password" name="newPassword" required placeholder="Minimum 6 characters" minlength="6" /></div>
+      <div class="form-actions"><button type="submit" class="btn-primary"><i class="fa-solid fa-key"></i> Reset Password</button></div>
     </form>
   </div>
 </div>
@@ -145,10 +101,5 @@ function openResetModal(id, username) {
   document.getElementById('resetUsername').textContent = username;
   document.getElementById('resetModal').classList.add('open');
 }
-
-// Auto-open add modal if there was an error (so user doesn't lose context)
-<% if (flash?.error && flash.error.includes('already exists')) { %>
-document.getElementById('addUserModal').classList.add('open');
-<% } %>
 </script>
 <%- include('_layout_bottom') %>
