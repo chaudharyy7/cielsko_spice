@@ -7,31 +7,53 @@
 <div class="admin-card">
   <div class="table-wrap">
     <table class="admin-table">
-      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Country</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+      <thead>
+        <tr><th>Name</th><th>Email</th><th>Phone</th><th>Country</th><th>Subject</th><th>Message</th><th>Date</th><th>Status</th><th>Actions</th></tr>
+      </thead>
       <tbody>
         <% if (contacts.length > 0) { %>
           <% contacts.forEach(c => { %>
-          <tr class="<%= c.status==='new'?'row-new':'' %>">
+          <tr class="<%= c.status==='new' ? 'row-new' : '' %>">
             <td><strong><%= c.name %></strong></td>
             <td><a href="mailto:<%= c.email %>"><%= c.email %></a></td>
-            <td><%= c.phone||'—' %></td>
-            <td><%= c.country||'—' %></td>
-            <td><%= c.subject||'—' %></td>
-            <td class="td-truncate" title="<%= c.message %>"><%= c.message.substring(0,60) %>...</td>
-            <td><%= new Date(c.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) %></td>
+            <td><%= c.phone || '—' %></td>
+            <td><%= c.country || '—' %></td>
+            <td><%= c.subject || '—' %></td>
+            <td class="td-message">
+              <div class="message-preview" id="msg-<%= c._id %>">
+                <span class="message-short"><%= c.message.substring(0, 60) %><%= c.message.length > 60 ? '...' : '' %></span>
+                <% if (c.message.length > 60) { %>
+                <span class="message-full" style="display:none"><%= c.message %></span>
+                <button class="msg-toggle-btn" onclick="toggleMessage('<%= c._id %>')">
+                  <i class="fa-solid fa-chevron-down fa-xs"></i> Read more
+                </button>
+                <% } %>
+              </div>
+            </td>
+            <td><%= new Date(c.createdAt).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'}) %></td>
             <td>
               <form method="POST" action="/admin/contacts/<%= c._id %>/status" style="display:inline">
                 <select name="status" onchange="this.form.submit()" class="status-select">
-                  <option value="new" <%= c.status==='new'?'selected':'' %>>New</option>
-                  <option value="read" <%= c.status==='read'?'selected':'' %>>Read</option>
-                  <option value="replied" <%= c.status==='replied'?'selected':'' %>>Replied</option>
+                  <option value="new"     <%= c.status==='new'     ? 'selected' : '' %>>New</option>
+                  <option value="read"    <%= c.status==='read'    ? 'selected' : '' %>>Read</option>
+                  <option value="replied" <%= c.status==='replied' ? 'selected' : '' %>>Replied</option>
                 </select>
               </form>
             </td>
             <td class="td-actions">
-              <a href="mailto:<%= c.email %>?subject=Re: <%= encodeURIComponent(c.subject||'Your enquiry') %>" class="btn-icon text-blue" title="Reply via email"><i class="fa-solid fa-reply"></i></a>
-              <form method="POST" action="/admin/contacts/<%= c._id %>/delete" onsubmit="return confirm('Delete this submission?')" style="display:inline">
-                <button type="submit" class="btn-icon text-red" title="Delete"><i class="fa-solid fa-trash"></i></button>
+              <a href="mailto:<%= c.email %>?subject=Re: <%= encodeURIComponent(c.subject || 'Your enquiry') %>"
+                class="btn-icon text-blue" title="Reply via email">
+                <i class="fa-solid fa-reply"></i>
+              </a>
+              <button class="btn-icon text-blue" title="View full message"
+                onclick="openMessageModal('<%= c.name %>', `<%= c.message.replace(/`/g, '\\`') %>`)">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              <form method="POST" action="/admin/contacts/<%= c._id %>/delete"
+                onsubmit="return confirm('Delete this submission?')" style="display:inline">
+                <button type="submit" class="btn-icon text-red" title="Delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
               </form>
             </td>
           </tr>
@@ -43,5 +65,83 @@
     </table>
   </div>
 </div>
+
+<!-- Full Message Modal -->
+<div class="modal" id="messageModal">
+  <div class="modal__backdrop" onclick="this.parentElement.classList.remove('open')"></div>
+  <div class="modal__box">
+    <div class="modal__header">
+      <div>
+        <h2>Full Message</h2>
+        <p class="modal__subtitle" id="modalSenderName"></p>
+      </div>
+      <button onclick="document.getElementById('messageModal').classList.remove('open')" class="modal__close">&times;</button>
+    </div>
+    <div id="modalMessageBody" style="
+      background: var(--adm-bg);
+      border: 1px solid var(--adm-border);
+      border-radius: 8px;
+      padding: 20px;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--adm-text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 60vh;
+      overflow-y: auto;
+    "></div>
+  </div>
+</div>
+
+<style>
+.td-message { max-width: 220px; }
+.message-preview { font-size: 0.84rem; color: var(--adm-muted); }
+.message-full { display: block; white-space: pre-wrap; word-break: break-word; color: var(--adm-text); line-height: 1.6; }
+.msg-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--adm-orange);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+.msg-toggle-btn:hover { opacity: 0.75; }
+</style>
+
+<script>
+function toggleMessage(id) {
+  const wrap   = document.getElementById('msg-' + id);
+  const short  = wrap.querySelector('.message-short');
+  const full   = wrap.querySelector('.message-full');
+  const btn    = wrap.querySelector('.msg-toggle-btn');
+  const isOpen = full.style.display !== 'none';
+
+  if (isOpen) {
+    full.style.display  = 'none';
+    short.style.display = 'inline';
+    btn.innerHTML = '<i class="fa-solid fa-chevron-down fa-xs"></i> Read more';
+  } else {
+    short.style.display = 'none';
+    full.style.display  = 'block';
+    btn.innerHTML = '<i class="fa-solid fa-chevron-up fa-xs"></i> Show less';
+  }
+}
+
+function openMessageModal(name, message) {
+  document.getElementById('modalSenderName').textContent = 'From: ' + name;
+  document.getElementById('modalMessageBody').textContent = message;
+  document.getElementById('messageModal').classList.add('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('messageModal').classList.remove('open');
+});
+</script>
 
 <%- include('_layout_bottom') %>
